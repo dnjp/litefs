@@ -1,2 +1,4 @@
 build:
-	cmake -H. -B_builds -DHUNTER_STATUS_DEBUG=ON
+	cmake -H. -Bbuild -DHUNTER_STATUS_DEBUG=ON && cd build && make
+clean:
+	rm -rf build

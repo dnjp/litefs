@@ -1,4 +1,4 @@
-#include "node.h"
+#include "merkle/node.h"
 
 std::vector<unsigned char> Node::verify() {}
 

@@ -4,7 +4,7 @@
 class Content;
 class Node;
 
-#include "node.h"
+#include "merkle/node.h"
 #include <cryptopp/sha.h>
 #include <vector>
 

@@ -21,13 +21,10 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # project include
-include_directories(${PROJECT_SOURCE_DIR}/core)
 include_directories("${CMAKE_SOURCE_DIR}")
-
-add_subdirectory(core)
-
-add_executable(lightfs core/main.cpp)
-target_link_libraries(lightfs PRIVATE cryptopp-static)
+# include_directories(${PROJECT_SOURCE_DIR}/src)
+add_subdirectory(merkle)
+add_subdirectory(cli)
 
   
 

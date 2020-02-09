@@ -1,5 +1,5 @@
-#include "merkle_tree.h"
-#include "content.h"
+#include "merkle/tree.h"
+#include "merkle/content.h"
 
 MerkleTree::MerkleTree(std::vector<Content> content) {}
 

@@ -4,8 +4,8 @@
 class MerkleTree;
 class Content;
 
-#include "content.h"
-#include "merkle_tree.h"
+#include "merkle/content.h"
+#include "merkle/tree.h"
 #include <vector>
 
 class Node {

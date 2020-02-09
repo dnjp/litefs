@@ -1,7 +1,22 @@
 [
 {
-  "directory": "/home/daniel/src/personal/cpp/lightfs/_builds",
-  "command": "/usr/bin/c++   -I/home/daniel/src/personal/cpp/lightfs/core -I/home/daniel/src/personal/cpp/lightfs -isystem /home/daniel/.hunter/_Base/c022f0c/bb25d6f/b085c90/Install/include  -O3 -DNDEBUG   -std=gnu++17 -o CMakeFiles/lightfs.dir/core/main.cpp.o -c /home/daniel/src/personal/cpp/lightfs/core/main.cpp",
-  "file": "/home/daniel/src/personal/cpp/lightfs/core/main.cpp"
+  "directory": "/home/daniel/src/personal/cpp/lightfs/build/merkle",
+  "command": "/usr/bin/c++   -I/home/daniel/src/personal/cpp/lightfs -I/home/daniel/src/personal/cpp/lightfs/merkle/include -I/home/daniel/src/personal/cpp/lightfs/merkle/src -isystem /home/daniel/.hunter/_Base/c022f0c/bb25d6f/b085c90/Install/include    -std=gnu++17 -o CMakeFiles/libmerkle.dir/src/tree.cc.o -c /home/daniel/src/personal/cpp/lightfs/merkle/src/tree.cc",
+  "file": "/home/daniel/src/personal/cpp/lightfs/merkle/src/tree.cc"
+},
+{
+  "directory": "/home/daniel/src/personal/cpp/lightfs/build/merkle",
+  "command": "/usr/bin/c++   -I/home/daniel/src/personal/cpp/lightfs -I/home/daniel/src/personal/cpp/lightfs/merkle/include -I/home/daniel/src/personal/cpp/lightfs/merkle/src -isystem /home/daniel/.hunter/_Base/c022f0c/bb25d6f/b085c90/Install/include    -std=gnu++17 -o CMakeFiles/libmerkle.dir/src/node.cc.o -c /home/daniel/src/personal/cpp/lightfs/merkle/src/node.cc",
+  "file": "/home/daniel/src/personal/cpp/lightfs/merkle/src/node.cc"
+},
+{
+  "directory": "/home/daniel/src/personal/cpp/lightfs/build/merkle",
+  "command": "/usr/bin/c++   -I/home/daniel/src/personal/cpp/lightfs -I/home/daniel/src/personal/cpp/lightfs/merkle/include -I/home/daniel/src/personal/cpp/lightfs/merkle/src -isystem /home/daniel/.hunter/_Base/c022f0c/bb25d6f/b085c90/Install/include    -std=gnu++17 -o CMakeFiles/libmerkle.dir/src/content.cc.o -c /home/daniel/src/personal/cpp/lightfs/merkle/src/content.cc",
+  "file": "/home/daniel/src/personal/cpp/lightfs/merkle/src/content.cc"
+},
+{
+  "directory": "/home/daniel/src/personal/cpp/lightfs/build/cli",
+  "command": "/usr/bin/c++   -I/home/daniel/src/personal/cpp/lightfs -I/home/daniel/src/personal/cpp/lightfs/merkle/include -isystem /home/daniel/.hunter/_Base/c022f0c/bb25d6f/b085c90/Install/include    -std=gnu++17 -o CMakeFiles/cli.dir/src/main.cc.o -c /home/daniel/src/personal/cpp/lightfs/cli/src/main.cc",
+  "file": "/home/daniel/src/personal/cpp/lightfs/cli/src/main.cc"
 }
 ]
