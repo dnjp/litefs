@@ -4,13 +4,12 @@
 #include <iostream>
 #include <string>
 
-
 int main()
 {
     // CryptoPP::byte digest[CryptoPP::SHA1::DIGESTSIZE];
-    // std::string message = "abcdefghijklmnopqrstuvwxyz";
+    // std::string message = "hello";
 
-    // CryptoPP::SHA1 hash;
+    // CryptoPP::SHA256 hash;
     // hash.CalculateDigest(digest, (const CryptoPP::byte*)message.c_str(), message.length());
 
     // CryptoPP::HexEncoder encoder;
@@ -24,6 +23,8 @@ int main()
 
     Content c("hello");
     c.print();
+    std::cout << "\n";
+    std::cout << "verified: " << c.verify() << std::endl;
 
     return 0;
 }

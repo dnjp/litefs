@@ -1,5 +1,35 @@
 #include "merkle/node.h"
 
-std::vector<unsigned char> Node::verify() {}
+Node::Node(std::array<CryptoPP::byte, CryptoPP::SHA256::DIGESTSIZE> hash, Content content, bool leaf, MerkleTree *tree) {
+    _hash = hash;
+    _content = content;
+    _leaf = leaf;
+    _tree = tree;
+}
 
-std::vector<unsigned char> Node::calculateHash() {}
+Node::Node(std::array<CryptoPP::byte, CryptoPP::SHA256::DIGESTSIZE> hash, Content content, bool leaf, bool dup, MerkleTree *tree) {
+    _hash = hash;
+    _content = content;
+    _leaf = leaf;
+    _dup = dup;
+    _tree = tree;
+}
+
+std::array<CryptoPP::byte, CryptoPP::SHA256::DIGESTSIZE>  Node::verify()
+{
+    // if (_leaf) {
+    //     return content.calculateHash();
+    // }
+    // std::string rightBytes = right->verify();
+    // std::string leftBytes = left->verify();
+    // h = tree->getHash();
+
+    // h := n.Tree.hashStrategy()
+    // if _, err := h.Write(append(leftBytes, rightBytes...)); err != nil {
+    // 	return nil, err
+    // }
+
+    // return h.Sum(nil), nil
+}
+
+std::array<CryptoPP::byte, CryptoPP::SHA256::DIGESTSIZE>  Node::calculateHash() {}

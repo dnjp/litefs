@@ -5,18 +5,17 @@
 #include <string>
 #include <vector>
 
-
 class Content {
 public:
     Content(std::string);
-    // std::vector<unsigned char> calculateHash();
+    std::array<CryptoPP::byte, CryptoPP::SHA256::DIGESTSIZE> calculateHash();
     bool equals(Content);
     bool verify();
     void print();
 
 private:
     std::string _content;
-    std::string _digest;
+    std::array<CryptoPP::byte, CryptoPP::SHA256::DIGESTSIZE> _digest;
     CryptoPP::SHA256 _hash;
 };
 
