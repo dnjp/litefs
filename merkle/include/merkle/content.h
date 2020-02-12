@@ -7,6 +7,7 @@
 
 class Content {
 public:
+    Content() {}
     Content(std::string);
     std::array<CryptoPP::byte, CryptoPP::SHA256::DIGESTSIZE> calculateHash();
     bool equals(Content);

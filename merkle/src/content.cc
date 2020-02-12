@@ -8,8 +8,6 @@
 Content::Content(std::string msg) // this can be replaced with a file
 {
     _content = msg;
-    // _hash.Update((const CryptoPP::byte*)_content.data(), _content.size());
-    // _digest.resize(_hash.DigestSize());
     CryptoPP::StringSource s(_content, true,
         new CryptoPP::HashFilter(_hash,
             new CryptoPP::ArraySink(
@@ -19,8 +17,6 @@ Content::Content(std::string msg) // this can be replaced with a file
 
 void Content::print()
 {
-    // CryptoPP::HexEncoder encoder(new CryptoPP::FileSink(std::cout));
-    // CryptoPP::StringSource(_digest, true, new CryptoPP::Redirector(encoder));
     for (auto& it : _digest) {
 	std::cout << std::hex << (int)it;	
     }
@@ -29,7 +25,6 @@ void Content::print()
 
 std::array<CryptoPP::byte, CryptoPP::SHA256::DIGESTSIZE> Content::calculateHash()
 {
-    // _hash.Final((CryptoPP::byte*)&_digest[0]);
     return _digest;
 }
 
