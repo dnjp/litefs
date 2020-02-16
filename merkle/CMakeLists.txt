@@ -3,7 +3,8 @@ project(merkle)
 add_library(libmerkle
   src/tree.cc
   src/node.cc
-  src/content.cc)
+  src/content.cc
+  src/hash.cc)
 
 # Define headers for this library. PUBLIC headers are used for
 # compiling the library, and will be added to consumers' build

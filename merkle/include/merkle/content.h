@@ -1,7 +1,7 @@
 #ifndef __CONTENT_H_INCLUDED__
 #define __CONTENT_H_INCLUDED__
 
-#include <cryptopp/sha.h>
+#include "merkle/hash.h"
 #include <string>
 #include <vector>
 
@@ -9,15 +9,21 @@ class Content {
 public:
     Content() {}
     Content(std::string);
-    std::array<CryptoPP::byte, CryptoPP::SHA256::DIGESTSIZE> calculateHash();
+    std::string calculateHash();
+    std::string getMessage() { return _msg; }
     bool equals(Content);
     bool verify();
-    void print();
+
+    bool operator==(const Content c) {
+	return _msg == c._msg;
+    }
+    bool operator!=(const Content c) {
+	return _msg != c._msg;
+    }
 
 private:
-    std::string _content;
-    std::array<CryptoPP::byte, CryptoPP::SHA256::DIGESTSIZE> _digest;
-    CryptoPP::SHA256 _hash;
+    std::string _msg;
+    Hash _hash = Hash();
 };
 
 #endif

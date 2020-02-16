@@ -5,33 +5,34 @@ class Content;
 class Node;
 
 #include "merkle/node.h"
-#include <cryptopp/sha.h>
 #include <vector>
 
 class MerkleTree {
 public:
-    MerkleTree(std::vector<Content> content);
+    MerkleTree() {};
 
-    std::vector<std::array<CryptoPP::byte, CryptoPP::SHA256::DIGESTSIZE>>
-        getMerklePath(Content);
+    std::vector<std::tuple<std::string,int>> getMerklePath(Content);
 
-    std::array<CryptoPP::byte, CryptoPP::SHA256::DIGESTSIZE> getMerkleRoot() {
+    std::string getMerkleRoot()
+    {
         return _merkleRoot;
     }
+
     std::vector<Node*> getLeafs() { return _leafs; }
     Node* getRoot() { return _root; }
 
+    void build(std::vector<Content> contents);
     void rebuild();
     void rebuildWithContent(std::vector<Content>);
     bool verify();
+    bool verifyContent(Content);
 
 private:
     void buildLeafs();
     void buildRoot();
-    std::array<CryptoPP::byte, CryptoPP::SHA256::DIGESTSIZE> createHashFromHash(
-        std::array<CryptoPP::byte, CryptoPP::SHA256::DIGESTSIZE*2>)
 
-        std::array<CryptoPP::byte, CryptoPP::SHA256::DIGESTSIZE> _merkleRoot;
+
+    std::string _merkleRoot;
     Node* _root;
     std::vector<Node*> _leafs;
 };

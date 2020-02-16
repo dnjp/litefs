@@ -1,4 +1,5 @@
 #include "merkle/content.h"
+#include "merkle/hash.h"
 #include <cryptopp/hex.h>
 #include <cryptopp/sha.h>
 #include <iostream>
@@ -6,25 +7,15 @@
 
 int main()
 {
-    // CryptoPP::byte digest[CryptoPP::SHA1::DIGESTSIZE];
-    // std::string message = "hello";
-
-    // CryptoPP::SHA256 hash;
-    // hash.CalculateDigest(digest, (const CryptoPP::byte*)message.c_str(), message.length());
-
-    // CryptoPP::HexEncoder encoder;
-    // std::string output;
-
-    // encoder.Attach(new CryptoPP::StringSink(output));
-    // encoder.Put(digest, sizeof(digest));
-    // encoder.MessageEnd();
-
-    // std::cout << output << std::endl;
-
     Content c("hello");
-    c.print();
-    std::cout << "\n";
-    std::cout << "verified: " << c.verify() << std::endl;
+    Hash h(c.getMessage());
+    std::cout << "verified: " << h.verify() << std::endl;
+    std::cout << h.toString() << std::endl;
+
+    h.final();
+    
+    std::cout << "verified: " << h.verify() << std::endl;
+    std::cout << h.toString() << std::endl;
 
     return 0;
 }

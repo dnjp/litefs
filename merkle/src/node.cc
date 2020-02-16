@@ -1,51 +1,66 @@
 #include "merkle/node.h"
 
-Node::Node(std::array<CryptoPP::byte, CryptoPP::SHA256::DIGESTSIZE> hash,
-    Content content, bool leaf, MerkleTree* tree)
+
+Node::Node(Hash hash, Content content, bool leaf, MerkleTree* tree)
 {
-    _hash = hash;
-    _content = content;
-    _leaf = leaf;
-    _tree = tree;
+    this->hash = hash;
+    this->content = content;
+    this->_leaf = leaf;
+    this->_tree = tree;
 }
 
-Node::Node(std::array<CryptoPP::byte, CryptoPP::SHA256::DIGESTSIZE> hash,
-    Content content, bool leaf, bool dup, MerkleTree* tree)
+Node::Node(Hash hash, Content content, bool leaf, bool dup, MerkleTree* tree)
 {
-    _hash = hash;
-    _content = content;
-    _leaf = leaf;
-    _dup = dup;
-    _tree = tree;
+    this->hash = hash;
+    this->content = content;
+    this->_leaf = leaf;
+    this->_dup = dup;
+    this->_tree = tree;
 }
 
-Node::Node(Node* left, Node* right,
-    std::array<CryptoPP::byte, CryptoPP::SHA256::DIGESTSIZE> hash,
-    MerkleTree* tree)
+Node::Node(Node* left, Node* right, Hash hash, MerkleTree* tree)
 {
-    _left = left;
-    _right = right;
-    _hash = hash;
-    _tree = tree;
+    this->left = left;
+    this->right = right;
+    this->hash = hash;
+    this->_tree = tree;
 }
 
-std::array<CryptoPP::byte, CryptoPP::SHA256::DIGESTSIZE> Node::verify()
+std::string Node::verify()
 {
-    // if (_leaf) {
-    //     return content.calculateHash();
-    // }
-    // std::string rightBytes = right->verify();
-    // std::string leftBytes = left->verify();
-    // h = tree->getHash();
+    if (_leaf) {
+        return content.calculateHash();
+    }
+    std::string lHash = left->verify();
+    std::string rHash = right->verify();
+    std::string tHash = _tree->getMerkleRoot();
 
-    // h := n.Tree.hashStrategy()
-    // if _, err := h.Write(append(leftBytes, rightBytes...)); err != nil {
-    // 	return nil, err
-    // }
+    // add rightBytes to leftBytes
+    std::string cHash = lHash.append(rHash);
 
-    // return h.Sum(nil), nil
+    // add the result to the hash
+    Hash hash = Hash(cHash);
+    hash.final();
+    return hash.toString();
 }
 
-std::array<CryptoPP::byte, CryptoPP::SHA256::DIGESTSIZE> Node::calculateHash()
+std::string Node::calculateHash()
 {
+    if (_leaf) {
+        return content.calculateHash();
+    }
+
+    // only call final() once
+    if (!_digest.empty()) {
+	return _digest;
+    }
+
+    std::string lHash = left->calculateHash();
+    std::string rHash = left->calculateHash();
+    std::string cHash = lHash.append(rHash);
+
+    Hash hash = Hash(cHash);
+    hash.final();
+    _digest = hash.toString();
+    return _digest;
 }

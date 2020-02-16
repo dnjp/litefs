@@ -1,39 +1,20 @@
 #include "merkle/content.h"
-#include <cryptopp/cryptlib.h>
-#include <cryptopp/files.h>
-#include <cryptopp/filters.h>
-#include <cryptopp/hex.h>
-#include <cryptopp/sha.h>
+#include "merkle/hash.h"
 
-Content::Content(std::string msg) // this can be replaced with a file
+
+Content::Content(std::string msg)
 {
-    _content = msg;
-    CryptoPP::StringSource s(_content, true,
-        new CryptoPP::HashFilter(_hash,
-            new CryptoPP::ArraySink(
-                _digest.data(), CryptoPP::SHA256::DIGESTSIZE)));
-    
+    _msg = msg;
+    _hash = Hash(msg);
 }
 
-void Content::print()
+std::string Content::calculateHash()
 {
-    for (auto& it : _digest) {
-	std::cout << std::hex << (int)it;	
-    }
-    std::cout << std::endl;
+    _hash.final();
+    return _hash.toString();
 }
-
-std::array<CryptoPP::byte, CryptoPP::SHA256::DIGESTSIZE> Content::calculateHash()
-{
-    return _digest;
-}
-
-bool Content::equals(Content c) { return true; }
 
 bool Content::verify()
 {
-    CryptoPP::SHA256 hash;
-    hash.Update((const CryptoPP::byte*)_content.data(), _content.size());
-    bool verified = hash.Verify((const CryptoPP::byte*)_digest.data());
-    return verified;
+    return _hash.verify();
 }

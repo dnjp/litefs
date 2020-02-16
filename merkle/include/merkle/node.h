@@ -6,30 +6,29 @@ class Content;
 
 #include "merkle/content.h"
 #include "merkle/tree.h"
+#include "merkle/hash.h"
 
 class Node {
 public:
-    Node(std::array<CryptoPP::byte, CryptoPP::SHA256::DIGESTSIZE>, Content, bool, MerkleTree*);
-    Node(std::array<CryptoPP::byte, CryptoPP::SHA256::DIGESTSIZE>, Content, bool, bool, MerkleTree*);  
-    Node(Node*, Node*, std::array<CryptoPP::byte, CryptoPP::SHA256::DIGESTSIZE>, MerkleTree*);
-    std::array<CryptoPP::byte, CryptoPP::SHA256::DIGESTSIZE> getHash() {
-	return _hash;
-    }
-    Content getContent() { return _content; }
-    void setParent(Node* n) { _parent = n; }
+    Node(Hash, Content, bool, MerkleTree*);
+    Node(Hash, Content, bool, bool, MerkleTree*);  
+    Node(Node*, Node*, Hash, MerkleTree*);
+
+    std::string verify();
+    std::string calculateHash();
+
+    Node* parent;
+    Hash hash;
+    Content content;
+    Node* left;
+    Node* right;
 
 private:
-    std::array<CryptoPP::byte, CryptoPP::SHA256::DIGESTSIZE>  verify();
-    std::array<CryptoPP::byte, CryptoPP::SHA256::DIGESTSIZE>  calculateHash();
-
-    std::array<CryptoPP::byte, CryptoPP::SHA256::DIGESTSIZE> _hash;
-    Content _content;
     MerkleTree* _tree;
     bool _leaf;
     bool _dup;
-    Node* _parent;
-    Node* _left;
-    Node* _right;
+    std::string _digest;
+
 };
 
 #endif
