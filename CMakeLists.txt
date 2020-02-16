@@ -19,6 +19,7 @@ find_package(cryptopp CONFIG REQUIRED)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_BUILD_TYPE Debug)
 
 # project include
 include_directories("${CMAKE_SOURCE_DIR}")

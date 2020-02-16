@@ -1,7 +1,6 @@
 #include "merkle/content.h"
 #include "merkle/hash.h"
 
-
 Content::Content(std::string msg)
 {
     _msg = msg;
@@ -14,7 +13,4 @@ std::string Content::calculateHash()
     return _hash.toString();
 }
 
-bool Content::verify()
-{
-    return _hash.verify();
-}
+bool Content::verify() { return _hash.verify(); }

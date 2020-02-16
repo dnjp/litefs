@@ -1,6 +1,5 @@
 #include "merkle/node.h"
 
-
 Node::Node(Hash hash, Content content, bool leaf, MerkleTree* tree)
 {
     this->hash = hash;
@@ -52,7 +51,7 @@ std::string Node::calculateHash()
 
     // only call final() once
     if (!_digest.empty()) {
-	return _digest;
+        return _digest;
     }
 
     std::string lHash = left->calculateHash();

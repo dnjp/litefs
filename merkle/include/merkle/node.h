@@ -5,13 +5,13 @@ class MerkleTree;
 class Content;
 
 #include "merkle/content.h"
-#include "merkle/tree.h"
 #include "merkle/hash.h"
+#include "merkle/tree.h"
 
 class Node {
 public:
     Node(Hash, Content, bool, MerkleTree*);
-    Node(Hash, Content, bool, bool, MerkleTree*);  
+    Node(Hash, Content, bool, bool, MerkleTree*);
     Node(Node*, Node*, Hash, MerkleTree*);
 
     std::string verify();
@@ -25,10 +25,9 @@ public:
 
 private:
     MerkleTree* _tree;
-    bool _leaf;
+    bool _leaf = false;
     bool _dup;
     std::string _digest;
-
 };
 
 #endif

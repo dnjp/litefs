@@ -14,12 +14,8 @@ public:
     bool equals(Content);
     bool verify();
 
-    bool operator==(const Content c) {
-	return _msg == c._msg;
-    }
-    bool operator!=(const Content c) {
-	return _msg != c._msg;
-    }
+    bool operator==(const Content c) { return _msg == c._msg; }
+    bool operator!=(const Content c) { return _msg != c._msg; }
 
 private:
     std::string _msg;
