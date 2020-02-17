@@ -1,7 +1,7 @@
 #include "merkle/node.h"
 #include <iostream>
 
-Node::Node(std::string h, Content c, bool isLeaf, MerkleTree* t)
+Node::Node(std::string h, Content* c, bool isLeaf, MerkleTree* t)
 {
     hash = h;
     content = c;
@@ -9,7 +9,7 @@ Node::Node(std::string h, Content c, bool isLeaf, MerkleTree* t)
     _tree = t;
 }
 
-Node::Node(std::string h, Content c, bool isLeaf, bool dup, MerkleTree* t)
+Node::Node(std::string h, Content* c, bool isLeaf, bool dup, MerkleTree* t)
 {
     hash = h;
     content = c;
@@ -29,13 +29,13 @@ Node::Node(Node* l, Node* r, std::string h, MerkleTree* t)
 std::string Node::verify()
 {
     if (_leaf) {
-        return content.calculateHash();
+        return content->calculateHash();
     }
     std::string lHash = left->verify();
     std::string rHash = right->verify();
 
     // add rightBytes to leftBytes
-    std::string cHash = lHash.append(rHash);
+    std::string cHash = lHash + rHash;
 
     // add the result to the hash
     Hash hash = Hash(cHash);
@@ -46,13 +46,13 @@ std::string Node::verify()
 std::string Node::calculateHash()
 {
     if (_leaf) {
-        return content.calculateHash();
+        return content->calculateHash();
     }
 
     std::string lHash = left->hash;
-    std::string rHash = left->hash;
-    std::string cHash = lHash.append(rHash);
-
+    std::string rHash = right->hash;
+    std::string cHash = lHash + rHash;
+    
     Hash h = Hash(cHash);
     h.final();
     _digest = h.calculate();

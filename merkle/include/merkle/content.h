@@ -10,6 +10,7 @@ public:
     Content() {}
     Content(std::string);
     std::string calculateHash();
+    std::string getPath() { return _path; }
 
     bool operator==(const Content c) { return _path == c._path; }
     bool operator!=(const Content c) { return _path != c._path; }

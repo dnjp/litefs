@@ -8,7 +8,7 @@ public:
     Hash() {}
     Hash(std::string);
     bool verify();
-    std::string final();
+    void final();
     std::string calculate();
     std::string file(std::string path);
 

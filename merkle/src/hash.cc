@@ -10,10 +10,15 @@
 #include <cryptopp/hex.h>
 #include <cryptopp/sha.h>
 
-Hash::Hash(std::string path)
+Hash::Hash(std::string msg)
 {
-    _hash.Update((const CryptoPP::byte*)path.data(), path.size());
+    _hash.Update((const CryptoPP::byte*)msg.data(), msg.size());
     _digest.resize(_hash.DigestSize());
+}
+
+void Hash::final()
+{
+    _hash.Final((CryptoPP::byte*)&_digest[0]);
 }
 
 std::string Hash::calculate()
@@ -28,12 +33,6 @@ bool Hash::verify()
 {
     bool verified = _hash.Verify((const CryptoPP::byte*)_digest.data());
     return verified;
-}
-
-std::string Hash::final()
-{
-    _hash.Final((CryptoPP::byte*)&_digest[0]);
-    return _digest;
 }
 
 std::string Hash::file(std::string path)
