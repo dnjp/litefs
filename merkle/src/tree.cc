@@ -100,8 +100,9 @@ bool MerkleTree::verifyContent(Content* content)
         // validates hashes are valid for tree
         Node* parent = leaf->parent;
         while (parent != nullptr) {
-	    // std::cout << "left: " << parent->left->content->getPath() << std::endl; // c1
-	    // std::cout << "right: " << parent->right->content->getPath() << std::endl;  // c2   
+            // std::cout << "left: " << parent->left->content->getPath() <<
+            // std::endl; // c1 std::cout << "right: " <<
+            // parent->right->content->getPath() << std::endl;  // c2
             std::string lHash = parent->left->calculateHash();
             std::string rHash = parent->right->calculateHash();
 

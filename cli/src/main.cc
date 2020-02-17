@@ -29,7 +29,7 @@ int main()
 
     Content c1 = Content("../../sample/hello.txt");
     Content c2 = Content("../../sample/world.txt");
-    Content c3 = Content("../../sample/test/txt.txt");    
+    Content c3 = Content("../../sample/test/txt.txt");
     std::vector<Content*> list = { &c1, &c2 };
 
     MerkleTree t = MerkleTree(list);
@@ -39,7 +39,6 @@ int main()
     std::cout << "tree size: " << t.getLeafs().size() << std::endl;
     std::cout << "tree valid: " << (t.verify() == 1 ? "true" : "false")
               << std::endl;
-
 
     for (int i = 0; i < list.size(); i++) {
         Content* c = list[i];

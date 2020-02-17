@@ -23,7 +23,6 @@ public:
     Content* content;
     std::string hash;
 
-
 private:
     MerkleTree* _tree;
     bool _leaf = false;

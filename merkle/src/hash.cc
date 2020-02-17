@@ -16,10 +16,7 @@ Hash::Hash(std::string msg)
     _digest.resize(_hash.DigestSize());
 }
 
-void Hash::final()
-{
-    _hash.Final((CryptoPP::byte*)&_digest[0]);
-}
+void Hash::final() { _hash.Final((CryptoPP::byte*)&_digest[0]); }
 
 std::string Hash::calculate()
 {

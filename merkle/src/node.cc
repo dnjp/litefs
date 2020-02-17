@@ -52,7 +52,7 @@ std::string Node::calculateHash()
     std::string lHash = left->hash;
     std::string rHash = right->hash;
     std::string cHash = lHash + rHash;
-    
+
     Hash h = Hash(cHash);
     h.final();
     _digest = h.calculate();
