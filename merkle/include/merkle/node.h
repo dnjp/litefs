@@ -10,15 +10,15 @@ class Content;
 
 class Node {
 public:
-    Node(Hash, Content, bool, MerkleTree*);
-    Node(Hash, Content, bool, bool, MerkleTree*);
-    Node(Node*, Node*, Hash, MerkleTree*);
+    Node(std::string, Content, bool, MerkleTree*);
+    Node(std::string, Content, bool, bool, MerkleTree*);
+    Node(Node*, Node*, std::string, MerkleTree*);
 
-    std::string verify();
     std::string calculateHash();
+    std::string verify();
 
     Node* parent;
-    Hash hash;
+    std::string hash;
     Content content;
     Node* left;
     Node* right;

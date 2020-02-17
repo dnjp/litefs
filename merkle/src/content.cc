@@ -1,16 +1,19 @@
 #include "merkle/content.h"
 #include "merkle/hash.h"
 
-Content::Content(std::string msg)
+Content::Content(std::string path)
 {
-    _msg = msg;
-    _hash = Hash(msg);
+    _path = path;
+    _hash = Hash(_path);
 }
 
-std::string Content::calculateHash()
-{
+std::string Content::calculateHash() {
+    // if (!_digest.empty()) {
+    // 	return _digest;
+    // }
+    // _digest = _hash.file(_path);
+    // return _digest;
+
     _hash.final();
-    return _hash.toString();
+    return _hash.final();
 }
-
-bool Content::verify() { return _hash.verify(); }

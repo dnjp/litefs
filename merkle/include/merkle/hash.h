@@ -7,10 +7,10 @@ class Hash {
 public:
     Hash() {}
     Hash(std::string);
-    void update(std::string);
     bool verify();
     std::string final();
-    std::string toString();
+    std::string calculate();
+    std::string file(std::string path);
 
 private:
     CryptoPP::SHA256 _hash;

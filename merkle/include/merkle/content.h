@@ -10,16 +10,14 @@ public:
     Content() {}
     Content(std::string);
     std::string calculateHash();
-    std::string getMessage() { return _msg; }
-    bool equals(Content);
-    bool verify();
 
-    bool operator==(const Content c) { return _msg == c._msg; }
-    bool operator!=(const Content c) { return _msg != c._msg; }
+    bool operator==(const Content c) { return _path == c._path; }
+    bool operator!=(const Content c) { return _path != c._path; }
 
 private:
-    std::string _msg;
+    std::string _path;
     Hash _hash = Hash();
+    std::string _digest;
 };
 
 #endif

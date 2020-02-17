@@ -6,4 +6,6 @@ add_executable(cli
 target_link_libraries(cli
   cryptopp-static
   libmerkle
+  stdc++fs
   )
+

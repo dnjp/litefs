@@ -15,42 +15,46 @@ void MerkleTree::build(std::vector<Content> contents)
         _leafs.push_back(node);
     }
 
-    // ensures we always have an even number of nodes
+    // make duplicate to ensure we always have an even number of nodes
     if (_leafs.size() % 2 == 1) {
-        std::string hash = _leafs[_leafs.size() - 1]->calculateHash();
-        Content c = _leafs[_leafs.size() - 1]->content;
+        std::string hash = _leafs.back()->hash;
+        Content c = _leafs.back()->content;
         Node* node = new Node(hash, c, true, true, this);
         _leafs.push_back(node);
     }
     buildRoot(_leafs);
 }
 
-void MerkleTree::buildRoot(std::vector<Node*> nl)
+void MerkleTree::buildRoot(std::vector<Node*> leaves)
 {
     std::vector<Node*> nodes;
-    for (int i = 0; i < nl.size(); i += 2) {
+    for (int i = 0; i < leaves.size(); i += 2) {
         int left = i;
         int right = i + 1;
-        if (i + 1 == nl.size()) {
+        if (i + 1 == leaves.size()) {
             right = i;
         }
-        std::string lHash = nl[left]->calculateHash();
-        std::string rHash = nl[right]->calculateHash();
+        std::string lHash = leaves[left]->hash;
+        std::string rHash = leaves[right]->hash;
 
         // create new hash with merged contents of lHash and rHash
         std::string cHash = lHash.append(rHash);
 
-        // create new node with the hashed hash
+        // create new node with the hashed value
         Hash hash = Hash(cHash);
-        Node* n = new Node(nl[left], nl[right], hash, this);
+	hash.final();
+        Node* n = new Node(leaves[left], leaves[right], hash.calculate(), this);
 
         nodes.push_back(n);
-        nl[left]->parent = n;
-        nl[right]->parent = n;
+        leaves[left]->parent = n;
+        leaves[right]->parent = n;
 
-        if (nl.size() == 2) {
+        if (leaves.size() == 2) {
             _root = n;
-            _merkleRoot = n->calculateHash();
+            _merkleRoot = n->hash;
+	    std::cout << "\nnode hash: " << n->hash << std::endl;
+	    std::cout << "node chash: " << n->calculateHash() << std::endl;
+	    std::cout << "node v: " << n->verify() << "\n" << std::endl;	    
             return;
         }
     }
@@ -67,7 +71,7 @@ std::vector<std::tuple<std::string, int>> MerkleTree::getMerklePath(
         }
         Node* parent = node->parent;
         while (parent != NULLPTR) {
-            if (parent->left->calculateHash() == parent->calculateHash()) {
+            if (parent->left->calculateHash().compare(parent->calculateHash()) == 0) {
                 merklePath.push_back({ parent->right->calculateHash(), 1 });
             } else {
                 merklePath.push_back({ parent->left->calculateHash(), 0 });
@@ -87,24 +91,32 @@ void MerkleTree::rebuildWithContent(std::vector<Content> contents)
 
 bool MerkleTree::verify()
 {
-    std::string hash = _root->verify();
-    return _root->calculateHash() == hash;
+    return _merkleRoot.compare(_root->verify()) == 0;
 }
 
-bool MerkleTree::verifyContent(Content)
+bool MerkleTree::verifyContent(Content content)
 {
-    for (Node* node : _leafs) {
-        Node* parent = node->parent;
-        while (parent != NULLPTR) {
+    for (Node* leaf : _leafs) {
+	// ensures that content matches one present in tree
+        if (leaf->content != content) {
+            continue;
+        }
+
+	// validates hashes are valid for tree
+        Node* parent = leaf->parent;
+        while (parent != nullptr) {
             std::string rHash = parent->right->calculateHash();
             std::string lHash = parent->left->calculateHash();
-            std::string cHash = lHash.append(rHash);
-            Hash hash(cHash);
+
+            Hash hash(lHash.append(rHash));
             hash.final();
-            std::string digest = hash.toString();
-            if (digest != parent->calculateHash()) {
+            std::string digest = hash.calculate();
+	    
+            if (digest.compare(parent->calculateHash()) != 0) {
                 return false;
             }
+
+	    // move to parent node
             parent = parent->parent;
         }
         return true;

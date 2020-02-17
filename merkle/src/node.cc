@@ -1,28 +1,29 @@
 #include "merkle/node.h"
+#include <iostream>
 
-Node::Node(Hash hash, Content content, bool leaf, MerkleTree* tree)
+Node::Node(std::string h, Content c, bool isLeaf, MerkleTree* t)
 {
-    this->hash = hash;
-    this->content = content;
-    this->_leaf = leaf;
-    this->_tree = tree;
+    hash = h;
+    content = c;
+    _leaf = isLeaf;
+    _tree = t;
 }
 
-Node::Node(Hash hash, Content content, bool leaf, bool dup, MerkleTree* tree)
+Node::Node(std::string h, Content c, bool isLeaf, bool dup, MerkleTree* t)
 {
-    this->hash = hash;
-    this->content = content;
-    this->_leaf = leaf;
-    this->_dup = dup;
-    this->_tree = tree;
+    hash = h;
+    content = c;
+    _leaf = isLeaf;
+    _dup = dup;
+    _tree = t;
 }
 
-Node::Node(Node* left, Node* right, Hash hash, MerkleTree* tree)
+Node::Node(Node* l, Node* r, std::string h, MerkleTree* t)
 {
-    this->left = left;
-    this->right = right;
-    this->hash = hash;
-    this->_tree = tree;
+    left = l;
+    right = r;
+    hash = h;
+    _tree = t;
 }
 
 std::string Node::verify()
@@ -32,7 +33,6 @@ std::string Node::verify()
     }
     std::string lHash = left->verify();
     std::string rHash = right->verify();
-    std::string tHash = _tree->getMerkleRoot();
 
     // add rightBytes to leftBytes
     std::string cHash = lHash.append(rHash);
@@ -40,7 +40,7 @@ std::string Node::verify()
     // add the result to the hash
     Hash hash = Hash(cHash);
     hash.final();
-    return hash.toString();
+    return hash.calculate();
 }
 
 std::string Node::calculateHash()
@@ -49,17 +49,12 @@ std::string Node::calculateHash()
         return content.calculateHash();
     }
 
-    // only call final() once
-    if (!_digest.empty()) {
-        return _digest;
-    }
-
-    std::string lHash = left->calculateHash();
-    std::string rHash = left->calculateHash();
+    std::string lHash = left->hash;
+    std::string rHash = left->hash;
     std::string cHash = lHash.append(rHash);
 
-    Hash hash = Hash(cHash);
-    hash.final();
-    _digest = hash.toString();
+    Hash h = Hash(cHash);
+    h.final();
+    _digest = h.calculate();
     return _digest;
 }

@@ -4,3 +4,4 @@ _builds
 deps/_Base
 .log
 .compile_commands.json
+sample
