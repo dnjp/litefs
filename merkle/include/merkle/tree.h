@@ -9,7 +9,7 @@ class Node;
 
 class MerkleTree {
 public:
-    MerkleTree(std::vector<Content*>);
+    MerkleTree(std::vector<Content>);
 
     std::vector<std::tuple<std::string, int>> getMerklePath(Content);
 
@@ -19,14 +19,14 @@ public:
     Node* getRoot() { return _root; }
 
     void rebuild();
-    void rebuildWithContent(std::vector<Content*>);
+    void rebuildWithContent(std::vector<Content>);
     bool verify();
-    bool verifyContent(Content*);
+    bool verifyContent(Content);
 
 private:
     void buildLeafs();
     void buildRoot(std::vector<Node*>);
-    void build(std::vector<Content*>);
+    void build(std::vector<Content>);
 
     std::string _merkleRoot;
     Node* _root;

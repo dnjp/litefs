@@ -2,15 +2,15 @@
 #include "merkle/content.h"
 #include <bits/stdc++.h>
 
-MerkleTree::MerkleTree(std::vector<Content*> contents) { build(contents); }
+MerkleTree::MerkleTree(std::vector<Content> contents) { build(contents); }
 
-void MerkleTree::build(std::vector<Content*> contents)
+void MerkleTree::build(std::vector<Content> contents)
 {
     if (contents.size() == 0) {
         return;
     }
-    for (Content* c : contents) {
-        std::string hash = c->calculateHash();
+    for (Content c : contents) {
+        std::string hash = c.calculateHash();
         Node* node = new Node(hash, c, true, this);
         _leafs.push_back(node);
     }
@@ -18,7 +18,7 @@ void MerkleTree::build(std::vector<Content*> contents)
     // make duplicate to ensure we always have an even number of nodes
     if (_leafs.size() % 2 == 1) {
         std::string hash = _leafs.back()->hash;
-        Content* c = _leafs.back()->content;
+        Content c = _leafs.back()->content;
         Node* node = new Node(hash, c, true, true, this);
         _leafs.push_back(node);
     }
@@ -63,8 +63,8 @@ std::vector<std::tuple<std::string, int>> MerkleTree::getMerklePath(
 {
     std::vector<std::tuple<std::string, int>> merklePath;
     for (Node* node : _leafs) {
-        if (node->content != &content) {
-            return merklePath;
+        if (node->content != content) {
+            continue;
         }
         Node* parent = node->parent;
         while (parent != NULLPTR) {
@@ -81,7 +81,7 @@ std::vector<std::tuple<std::string, int>> MerkleTree::getMerklePath(
     return merklePath;
 }
 
-void MerkleTree::rebuildWithContent(std::vector<Content*> contents)
+void MerkleTree::rebuildWithContent(std::vector<Content> contents)
 {
     build(contents);
     _merkleRoot = _root->calculateHash();
@@ -89,7 +89,7 @@ void MerkleTree::rebuildWithContent(std::vector<Content*> contents)
 
 bool MerkleTree::verify() { return _merkleRoot.compare(_root->verify()) == 0; }
 
-bool MerkleTree::verifyContent(Content* content)
+bool MerkleTree::verifyContent(Content content)
 {
     for (Node* leaf : _leafs) {
         // ensures that content matches one present in tree
@@ -98,8 +98,10 @@ bool MerkleTree::verifyContent(Content* content)
         }
 
         // validates hashes are valid for tree
+        // Node* parent = leaf->parent;
         Node* parent = leaf->parent;
         while (parent != nullptr) {
+
             // std::cout << "left: " << parent->left->content->getPath() <<
             // std::endl; // c1 std::cout << "right: " <<
             // parent->right->content->getPath() << std::endl;  // c2
@@ -124,7 +126,7 @@ bool MerkleTree::verifyContent(Content* content)
 
 void MerkleTree::rebuild()
 {
-    std::vector<Content*> contents;
+    std::vector<Content> contents;
     for (Node* n : _leafs) {
         contents.push_back(n->content);
     }

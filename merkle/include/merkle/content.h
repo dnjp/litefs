@@ -8,9 +8,12 @@
 class Content {
 public:
     Content() {}
-    Content(std::string);
-    std::string calculateHash();
+    Content(std::string path)
+        : _path(path)
+    {
+    }
     std::string getPath() { return _path; }
+    std::string calculateHash();
 
     bool operator==(const Content c) { return _path == c._path; }
     bool operator!=(const Content c) { return _path != c._path; }

@@ -1,7 +1,7 @@
 #include "merkle/node.h"
 #include <iostream>
 
-Node::Node(std::string h, Content* c, bool isLeaf, MerkleTree* t)
+Node::Node(std::string h, Content c, bool isLeaf, MerkleTree* t)
 {
     hash = h;
     content = c;
@@ -9,7 +9,7 @@ Node::Node(std::string h, Content* c, bool isLeaf, MerkleTree* t)
     _tree = t;
 }
 
-Node::Node(std::string h, Content* c, bool isLeaf, bool dup, MerkleTree* t)
+Node::Node(std::string h, Content c, bool isLeaf, bool dup, MerkleTree* t)
 {
     hash = h;
     content = c;
@@ -29,7 +29,7 @@ Node::Node(Node* l, Node* r, std::string h, MerkleTree* t)
 std::string Node::verify()
 {
     if (_leaf) {
-        return content->calculateHash();
+        return content.calculateHash();
     }
     std::string lHash = left->verify();
     std::string rHash = right->verify();
@@ -46,7 +46,7 @@ std::string Node::verify()
 std::string Node::calculateHash()
 {
     if (_leaf) {
-        return content->calculateHash();
+        return content.calculateHash();
     }
 
     std::string lHash = left->hash;
