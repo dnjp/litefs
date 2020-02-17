@@ -1,1 +1,1 @@
-# lightfs
+# litefs

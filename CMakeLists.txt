@@ -11,7 +11,7 @@ HunterGate(
     LOCAL
 )
 
-project(lightfs)  
+project(litefs)  
 
 # Download dependencies
 hunter_add_package(cryptopp)
