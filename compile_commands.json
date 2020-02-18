@@ -23,5 +23,10 @@
   "directory": "/home/daniel/src/personal/cpp/litefs/build/cli",
   "command": "/usr/bin/c++   -I/home/daniel/src/personal/cpp/litefs -I/home/daniel/src/personal/cpp/litefs/cli/include -I/home/daniel/src/personal/cpp/litefs/cli/src -I/home/daniel/src/personal/cpp/litefs/merkle/include -isystem /home/daniel/.hunter/_Base/c022f0c/bb25d6f/b085c90/Install/include  -g   -std=gnu++17 -o CMakeFiles/libcli.dir/src/cli.cc.o -c /home/daniel/src/personal/cpp/litefs/cli/src/cli.cc",
   "file": "/home/daniel/src/personal/cpp/litefs/cli/src/cli.cc"
+},
+{
+  "directory": "/home/daniel/src/personal/cpp/litefs/build/lfs",
+  "command": "/usr/bin/c++   -I/home/daniel/src/personal/cpp/litefs -I/home/daniel/src/personal/cpp/litefs/cli/include -I/home/daniel/src/personal/cpp/litefs/merkle/include -isystem /home/daniel/.hunter/_Base/c022f0c/bb25d6f/b085c90/Install/include  -g   -std=gnu++17 -o CMakeFiles/lfs.dir/main.cc.o -c /home/daniel/src/personal/cpp/litefs/lfs/main.cc",
+  "file": "/home/daniel/src/personal/cpp/litefs/lfs/main.cc"
 }
 ]

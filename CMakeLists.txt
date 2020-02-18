@@ -15,7 +15,9 @@ project(litefs)
 
 # Download dependencies
 hunter_add_package(cryptopp)
+hunter_add_package(nlohmann_json)
 find_package(cryptopp CONFIG REQUIRED)
+find_package(nlohmann_json CONFIG REQUIRED)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)

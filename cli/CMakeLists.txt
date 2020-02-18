@@ -16,6 +16,7 @@ target_include_directories(libcli PUBLIC
 # Depend on a library that we defined in the top-level file
 target_link_libraries(libcli
   libmerkle
+  nlohmann_json::nlohmann_json
   stdc++fs)
 
 # This makes the project importable from the build directory
