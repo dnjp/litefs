@@ -26,7 +26,7 @@ set(CMAKE_BUILD_TYPE Debug)
 # project include
 include_directories("${CMAKE_SOURCE_DIR}")
 
-add_subdirectory(merkle)
+add_subdirectory(merkle_tree)
 add_subdirectory(cli)
 add_subdirectory(lfs)
 
