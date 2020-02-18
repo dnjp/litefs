@@ -75,7 +75,7 @@ void CLI::printMerklePathForContent(MerkleTree t, Content c)
 
 void CLI::printUsage()
 {
-    std::cout << "usage: litefs <command> [<args>]" << std::endl;
+    std::cout << "usage: litefs <command> <args>" << std::endl;
     std::cout << "\n";
     std::cout << "These are the common lfs commands:" << std::endl;
     std::cout << "\n";
