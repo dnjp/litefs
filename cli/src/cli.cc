@@ -1,45 +1,28 @@
 #include "cli/cli.h"
 
 #include <filesystem>
-#include <iostream>
 #include <fstream>
+#include <iostream>
 #include <string>
 
 namespace fs = std::filesystem;
 
-void CLI::initialize() {
-    _args["add"] = ADD;
-    _args["ls"] = LIST;
-    _args["rm"] = REMOVE;        
-}
-
 void CLI::persist(std::vector<Content> c, std::string root)
 {
-    std::vector<std::string> contents;    
+    std::vector<std::string> contents;
     for (auto content : c) {
-	contents.push_back(content.calculateHash());
+        contents.push_back(content.calculateHash());
     }
-    nlohmann::json j = readFile("file.json");
-    
+    nlohmann::json j = _db.readAll();
+
     // nlohmann::json j;
     j[root] = contents;
-    writeToFile("file.json", j);
-}
-
-nlohmann::json CLI::readFile(std::string path) {
-    std::ifstream i(path);
-    nlohmann::json j;
-    i >> j;
-    return j;
-}
-
-void CLI::writeToFile(std::string path, nlohmann::json j) {
-    std::ofstream o(path);
-    o << j << std::endl;
+    _db.write(j);
 }
 
 // get directory from user
-std::vector<Content> CLI::getContentListForPath(std::string path) {
+std::vector<Content> CLI::getContentListForPath(std::string path)
+{
 
     // read all file names in directory
     std::vector<Content> list;
@@ -53,54 +36,65 @@ std::vector<Content> CLI::getContentListForPath(std::string path) {
     return list;
 }
 
-MerkleTree CLI::constructMerkleTree(std::vector<Content> list) {
+MerkleTree CLI::constructMerkleTree(std::vector<Content> list)
+{
     MerkleTree t = MerkleTree(list);
     return t;
 }
 
-void CLI::printTreeStats(MerkleTree t, std::vector<Content> list) {
+void CLI::printTreeStats(MerkleTree t, std::vector<Content> list)
+{
     std::string root = t.getMerkleRoot();
     std::cout << "\n";
 
     if (t.verify() == false) {
-	std::cout << "error: tree is invalid." << std::endl;
-	return;
+        std::cout << "error: tree is invalid." << std::endl;
+        return;
     }
     std::cout << "root hash: " << root << std::endl;
     std::cout << "tree size: " << t.getLeafs().size() << std::endl;
 
     for (int i = 0; i < list.size(); i++) {
         Content c = list[i];
-	std::cout << "file: " << c.getPath() << std::endl;
-	std::cout << "      " << c.calculateHash() << std::endl;
-	std::cout << "\n";
-    }    
+        std::cout << "file: " << c.getPath() << std::endl;
+        std::cout << "      " << c.calculateHash() << std::endl;
+        std::cout << "\n";
+    }
 }
 
-void CLI::printMerklePathForContent(MerkleTree t, Content c) {
+void CLI::printMerklePathForContent(MerkleTree t, Content c)
+{
     std::vector<std::tuple<std::string, int>> mpath = t.getMerklePath(c);
     std::cout << "path size: " << mpath.size() << std::endl;
     for (auto p : mpath) {
         auto hash = std::get<0>(p);
         auto idx = std::get<1>(p);
         std::cout << idx << ": " << hash << std::endl;
-    }    
+    }
 }
 
-void CLI::printUsage() {
+void CLI::printUsage()
+{
     std::cout << "usage: litefs <command> [<args>]" << std::endl;
     std::cout << "\n";
     std::cout << "These are the common lfs commands:" << std::endl;
     std::cout << "\n";
-    std::cout << "    add    <directory>   Add directory to stored stored hashes." << std::endl;
+    std::cout
+        << "    add    <directory>   Add directory to stored stored hashes."
+        << std::endl;
     std::cout << "\n";
-    std::cout << "    ls                   List the hashes that are currently stored." << std::endl;
+    std::cout
+        << "    ls                   List the hashes that are currently stored."
+        << std::endl;
     std::cout << "\n";
-    std::cout << "    rm     <hash>        Remove the selected hash from storage." << std::endl;
+    std::cout
+        << "    rm     <hash>        Remove the selected hash from storage."
+        << std::endl;
     std::cout << "\n";
 }
 
-void CLI::handleAdd(std::basic_string<char> input) {
+void CLI::handleAdd(std::basic_string<char> input)
+{
     std::string path(input);
     std::vector<Content> list = getContentListForPath(path);
     MerkleTree t = constructMerkleTree(list);
@@ -108,26 +102,69 @@ void CLI::handleAdd(std::basic_string<char> input) {
     printTreeStats(t, list);
 }
 
-void CLI::handleRemove(std::basic_string<char> input) {
+void CLI::handleRemove(std::basic_string<char> input)
+{
     std::string hash(input);
-    nlohmann::json j = readFile("file.json");    
+    nlohmann::json j = _db.readAll();
     j.erase(hash);
-    writeToFile("file.json", j);
+    _db.write(j);
+
+    std::cout << "\n";
+    std::cout << "removed hash: " << hash << std::endl;
+    std::cout << "\n";    
 }
 
-void CLI::handleList() {
-    nlohmann::json j = readFile("file.json");
-    std::cout << j.dump(4) << std::endl;
+void CLI::handleList()
+{
+    nlohmann::json j = _db.readAll();
+    std::cout << "\n";
+    if (j.is_null() == true) {
+	std::cout << "no files have been hashed" << std::endl;
+    } else {
+	std::cout << j.dump(4) << std::endl;
+    }
+    std::cout << "\n";    
 }
 
+void CLI::checkConfig()
+{
+    if (_cf.shouldInit() == true) {
+        std::cout << "\n";
+        std::cout << "initializing configuration...  ";
+        _cf.init();
+        _db.setLocation(_cf.getDBLocation());
+        std::cout << "done." << std::endl;
+    }
+}
 
+void CLI::checkDB()
+{
+    if (_db.shouldInit() == true) {
+        std::cout << "initializing database configuration...  ";
+        _db.init();
+        std::cout << "done." << std::endl;
+        std::cout << "\n";
+    }
+}
 
-int CLI::start(int argc, char* argv[]) {
+int CLI::start(int argc, char* argv[])
+{
+    checkConfig();
+    _db.setLocation(_cf.getDBLocation());
+    checkDB();
+
+    if (_db.shouldInit() == true) {
+        std::cout << "initializing database configuration...  ";
+        _db.init();
+        std::cout << "done." << std::endl;
+        std::cout << "\n";
+    }
+
     if (argc == 1) {
-	std::cout << "no command supplied.\n" << std::endl;
-	printUsage();
-	std::cout << "\n";
-	return 1;
+        std::cout << "no command supplied.\n" << std::endl;
+        printUsage();
+        std::cout << "\n";
+        return 1;
     }
 
     std::string arg(argv[1]);
@@ -135,32 +172,34 @@ int CLI::start(int argc, char* argv[]) {
     case ADD:
 
         if (argc != 3) {
-            std::cout << "please supply a path to the [add] command.\n" << std::endl;
+            std::cout << "please supply a path to the [add] command.\n"
+                      << std::endl;
             printUsage();
             std::cout << "\n";
-	    return 1;
+            return 1;
         }
 
-	handleAdd(argv[2]);
+        handleAdd(argv[2]);
         break;
     case LIST:
-	handleList();
+        handleList();
         break;
     case REMOVE:
         if (argc != 3) {
-            std::cout << "please supply a hash to the [rm] command.\n" << std::endl;
+            std::cout << "please supply a hash to the [rm] command.\n"
+                      << std::endl;
             printUsage();
             std::cout << "\n";
-	    return 1;
+            return 1;
         }
-	handleRemove(argv[2]);
+        handleRemove(argv[2]);
         break;
     default:
 
-	std::cout << arg << " is not a valid command.\n" << std::endl;
-	printUsage();
-	std::cout << "\n";
-	return 1;
+        std::cout << arg << " is not a valid command.\n" << std::endl;
+        printUsage();
+        std::cout << "\n";
+        return 1;
     }
 
     return 0;

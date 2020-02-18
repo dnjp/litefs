@@ -1,7 +1,10 @@
 project(cli)
 
 add_library(libcli
-  src/cli.cc)
+  src/cli.cc
+  src/db.cc
+  src/config.cc    
+  )
 
 # Define headers for this library. PUBLIC headers are used for
 # compiling the library, and will be added to consumers' build

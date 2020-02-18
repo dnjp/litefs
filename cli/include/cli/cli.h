@@ -1,21 +1,29 @@
 #ifndef __CLI_H_INCLUDED__
 #define __CLI_H_INCLUDED__
 
+// local
 #include "merkle/content.h"
+#include "cli/db.h"
+#include "cli/config.h"
 #include "merkle/tree.h"
+
+// external
 #include <nlohmann/json.hpp>
 
+// system
 #include <vector>
 
 class CLI {
 public:
     CLI() {
-	initialize();
+	// accepted commands
+        _args["add"] = ADD;
+        _args["ls"] = LIST;
+        _args["rm"] = REMOVE;
     }
 
     int start(int, char**);
 private:
-    void initialize();
 
     // Merkle Tree Wrappers
     std::vector<Content> getContentListForPath(std::string);
@@ -33,12 +41,18 @@ private:
 
     // Storage Helpers
     void persist(std::vector<Content> c, std::string root);
-    nlohmann::json readFile(std::string);    
-    void writeToFile(std::string, nlohmann::json);
 
     // Command Line Arguments
     enum _arguments { INVALID, ADD, LIST, REMOVE };
     std::map<std::string, _arguments> _args;
+
+    // Database
+    DB _db;
+    void checkDB();
+
+    // Configuration
+    Config _cf;
+    void checkConfig();
 };
 
 #endif
