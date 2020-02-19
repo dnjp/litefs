@@ -99,6 +99,9 @@ void CLI::printUsage()
                  "network access"
               << std::endl;
     std::cout << "\n";
+    std::cout << "    help                 Show this usage message again."
+              << std::endl;
+    std::cout << "\n";
 }
 
 std::vector<endpoint> getEndpoints(
@@ -171,10 +174,9 @@ void CLI::handleServe(std::basic_string<char> input)
     struct root r = _db.fromJson(contents);
 
     std::cout << "\n";
-    std::cout << "verifying contents of hash " << hash
-                  << std::endl;
+    std::cout << "verifying contents of hash " << hash << std::endl;
     std::cout << "\n";
-    
+
     if (verifyContents(r, hash) == false) {
         std::cout << "\n";
         std::cout << "contents have been changed since being constructed."
@@ -221,7 +223,7 @@ void CLI::handleList()
     nlohmann::json j = _db.readAll();
     std::cout << "\n";
     if (j.is_null() == true) {
-        std::cout << "no files have been hashed" << std::endl;
+        std::cout << "no files have been added" << std::endl;
     } else {
         std::cout << j.dump(4) << std::endl;
     }
@@ -305,6 +307,9 @@ int CLI::start(int argc, char* argv[])
             return 1;
         }
         handleServe(argv[2]);
+        break;
+    case HELP:
+	printUsage();
         break;
     default:
 

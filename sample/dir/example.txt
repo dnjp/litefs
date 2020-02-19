@@ -1,0 +1,1 @@
+litefs can recursively pull files from directories too

@@ -22,7 +22,8 @@ public:
         _args["add"] = ADD;
         _args["status"] = LIST;
         _args["rm"] = REMOVE;
-        _args["serve"] = SERVE;	
+        _args["serve"] = SERVE;
+        _args["help"] = HELP;		
     }
 
     int start(int, char**);
@@ -48,7 +49,7 @@ private:
     void persist(std::vector<Content> c, std::string root, std::string);
 
     // Command Line Arguments
-    enum _arguments { INVALID, ADD, LIST, REMOVE, SERVE };
+    enum _arguments { INVALID, ADD, LIST, REMOVE, SERVE, HELP };
     std::map<std::string, _arguments> _args;
 
     // Database
