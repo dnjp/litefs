@@ -3,6 +3,7 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+#include <sstream>
 #include <string>
 
 namespace fs = std::filesystem;
@@ -105,25 +106,61 @@ void CLI::handleServe(std::basic_string<char> input)
     std::string hash(input);
     nlohmann::json j = _db.readAll();
 
-    // returns an array of json objects
-    // nlohmann::json contents = j[hash].get<nlohmann::json>();
-    // struct root r = _db.fromJson(contents);
+    // returns an array of stored json objects
+    nlohmann::json contents = j[hash].get<nlohmann::json>();
+    struct root r = _db.fromJson(contents);
 
-    // std::cout << "root_hash: " << hash << std::endl;
-    // std::cout << "root_path: " << r.root_path << std::endl;
-    // std::cout << "contents: " << std::endl;
-    // for (auto c : r.contents) {
-    //     std::cout << "    content_hash: " << c.content_hash << std::endl;
-    //     std::cout << "    content_path: " << c.content_path << std::endl;
-    // }
-
+    // initialize server settings
+    std::string host = "localhost";
+    int port = 3000;
     std::vector<endpoint> endpoints;
-    struct endpoint e;
-    e.path = "/hello";
-    e.content = "hello";
-    e.content_type = "text/plain";
-    endpoints.push_back(e);
-    Server svr = Server("localhost", 3000);
+
+    // construct root html page
+    struct endpoint root;
+    root.path = "/" + hash;
+    std::stringstream content;
+
+    // start root page html
+    content << "<!DOCTYPE html><html><head><meta charset='UTF-8'><title>"
+            << hash << "</title></head><body> ";
+
+    // add to root page html and construct individual content pages
+    for (auto c : r.contents) {
+
+        // read contents of text file into string
+        std::ifstream input(c.content_path);
+        std::string textContent((std::istreambuf_iterator<char>(input)),
+            (std::istreambuf_iterator<char>()));
+
+        std::stringstream html;
+        html << "<!DOCTYPE html><html><head><meta charset='UTF-8'><title>"
+             << c.content_hash << "</title></head><body> "
+             << "<div>" << textContent << "</div>"
+             << "</body></html>";
+
+        struct endpoint e;
+        e.path = "/" + c.content_hash;
+        e.content = html.str();
+        e.content_type = "text/html";
+
+        endpoints.push_back(e);
+
+        // add content to html elements for root page
+        content << "<div>"
+                << "<a href='"
+                << "http://" << host << ":" << port << e.path << "'>"
+                << c.content_hash << "</a>"
+                << "</div>";
+    }
+
+    // end root page html
+    content << "</body></html>";
+
+    root.content = content.str();
+    root.content_type = "text/html";
+    endpoints.push_back(root);
+
+    Server svr = Server(host, port);
     svr.start(endpoints);
 }
 
