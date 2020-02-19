@@ -7,66 +7,20 @@
 
 namespace fs = std::filesystem;
 
-namespace hash {
-
-struct elem {
-    std::string content_hash;
-    std::string content_path;
-};
-
-struct root {
-    std::string root_path;
-    std::vector<elem> contents;
-};
-
-nlohmann::json toJson(root e) {
-    nlohmann::json j;
-
-    j["root_path"] = e.root_path;
-
-    std::vector<nlohmann::json> elements;
-    for (elem content : e.contents) {
-	nlohmann::json elem;
-	elem["content_hash"] = content.content_hash;
-	elem["content_path"] = content.content_path;
-	elements.push_back(elem);
-    }
-
-    j["contents"] = elements;
-
-    return j;
-}
-
-root fromJson(nlohmann::json jRoot) {
-    root e;
-    jRoot.at("root_path").get_to(e.root_path);
-    
-    std::vector<nlohmann::json> contents = jRoot["contents"].get<nlohmann::json>();
-    for (auto c : contents) {
-        elem el;
-        c.at("content_hash").get_to(el.content_hash);
-        c.at("content_path").get_to(el.content_path);
-	e.contents.push_back(el);
-    }    
-
-    return e;
-}
-}
-
 void CLI::persist(std::vector<Content> c, std::string root, std::string path)
 {
     nlohmann::json j = _db.readAll();
 
-    hash::root e;
+    struct root e;
     e.root_path = path;
     for (auto content : c) {
-	hash::elem l;
+	struct elem l;
     	l.content_hash = content.calculateHash();
     	l.content_path = content.getPath();
     	e.contents.push_back(l);
     }
 
-    j[root] = hash::toJson(e);;
+    j[root] = _db.toJson(e);;
     _db.write(j);
 }
 
@@ -152,7 +106,7 @@ void CLI::handleServe(std::basic_string<char> input)
 
     // returns an array of json objects
     nlohmann::json contents = j[hash].get<nlohmann::json>();
-    hash::root r = hash::fromJson(contents);
+    struct root r = _db.fromJson(contents);
 
     std::cout << "root_hash: " << hash << std::endl;
     std::cout << "root_path: " << r.root_path << std::endl;

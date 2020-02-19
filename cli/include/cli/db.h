@@ -5,6 +5,19 @@
 #include <string>
 #include <nlohmann/json.hpp>
 
+struct elem {
+    std::string content_hash;
+    std::string content_path;
+};
+
+struct root {
+    std::string root_path;
+    std::vector<elem> contents;
+};
+
+typedef struct elem elem;
+typedef struct root root;
+
 class DB {
 public:
     DB() {}
@@ -19,6 +32,10 @@ public:
     bool shouldInit();
     void init();
     std::string location;
+
+
+    nlohmann::json toJson(root);
+    root fromJson(nlohmann::json);
 };
 
 #endif
