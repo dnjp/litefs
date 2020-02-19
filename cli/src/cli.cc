@@ -7,23 +7,72 @@
 
 namespace fs = std::filesystem;
 
-void CLI::persist(std::vector<Content> c, std::string root)
-{
-    std::vector<std::string> contents;
-    for (auto content : c) {
-        contents.push_back(content.calculateHash());
+namespace hash {
+
+struct elem {
+    std::string content_hash;
+    std::string content_path;
+};
+
+struct root {
+    std::string root_path;
+    std::vector<elem> contents;
+};
+
+nlohmann::json toJson(root e) {
+    nlohmann::json j;
+
+    j["root_path"] = e.root_path;
+
+    std::vector<nlohmann::json> elements;
+    for (elem content : e.contents) {
+	nlohmann::json elem;
+	elem["content_hash"] = content.content_hash;
+	elem["content_path"] = content.content_path;
+	elements.push_back(elem);
     }
+
+    j["contents"] = elements;
+
+    return j;
+}
+
+root fromJson(nlohmann::json jRoot) {
+    root e;
+    jRoot.at("root_path").get_to(e.root_path);
+    
+    std::vector<nlohmann::json> contents = jRoot["contents"].get<nlohmann::json>();
+    for (auto c : contents) {
+        elem el;
+        c.at("content_hash").get_to(el.content_hash);
+        c.at("content_path").get_to(el.content_path);
+	e.contents.push_back(el);
+    }    
+
+    return e;
+}
+}
+
+void CLI::persist(std::vector<Content> c, std::string root, std::string path)
+{
     nlohmann::json j = _db.readAll();
 
-    // nlohmann::json j;
-    j[root] = contents;
+    hash::root e;
+    e.root_path = path;
+    for (auto content : c) {
+	hash::elem l;
+    	l.content_hash = content.calculateHash();
+    	l.content_path = content.getPath();
+    	e.contents.push_back(l);
+    }
+
+    j[root] = hash::toJson(e);;
     _db.write(j);
 }
 
 // get directory from user
 std::vector<Content> CLI::getContentListForPath(std::string path)
 {
-
     // read all file names in directory
     std::vector<Content> list;
     for (auto& entry : fs::recursive_directory_iterator(path)) {
@@ -32,7 +81,6 @@ std::vector<Content> CLI::getContentListForPath(std::string path)
             list.push_back(c);
         }
     }
-
     return list;
 }
 
@@ -84,21 +132,45 @@ void CLI::printUsage()
         << std::endl;
     std::cout << "\n";
     std::cout
-        << "    ls                   List the hashes that are currently stored."
+        << "    status               List the hashes that are currently stored."
         << std::endl;
     std::cout << "\n";
     std::cout
         << "    rm     <hash>        Remove the selected hash from storage."
         << std::endl;
     std::cout << "\n";
+    std::cout << "    serve  <hash>        Serve the specified hash for "
+                 "network access"
+              << std::endl;
+    std::cout << "\n";
+}
+
+void CLI::handleServe(std::basic_string<char> input)
+{
+    std::string hash(input);
+    nlohmann::json j = _db.readAll();
+
+    // returns an array of json objects
+    nlohmann::json contents = j[hash].get<nlohmann::json>();
+    hash::root r = hash::fromJson(contents);
+
+    std::cout << "root_hash: " << hash << std::endl;
+    std::cout << "root_path: " << r.root_path << std::endl;
+    std::cout << "contents: " << std::endl;
+    for (auto c : r.contents) {
+	std::cout << "    content_hash: " << c.content_hash << std::endl;
+	std::cout << "    content_path: " << c.content_path << std::endl;	
+    }
 }
 
 void CLI::handleAdd(std::basic_string<char> input)
 {
     std::string path(input);
-    std::vector<Content> list = getContentListForPath(path);
+    std::string absPath = fs::absolute(path).string();
+    std::vector<Content> list = getContentListForPath(absPath);
+
     MerkleTree t = constructMerkleTree(list);
-    persist(list, t.getMerkleRoot());
+    persist(list, t.getMerkleRoot(), absPath);
     printTreeStats(t, list);
 }
 
@@ -111,7 +183,7 @@ void CLI::handleRemove(std::basic_string<char> input)
 
     std::cout << "\n";
     std::cout << "removed hash: " << hash << std::endl;
-    std::cout << "\n";    
+    std::cout << "\n";
 }
 
 void CLI::handleList()
@@ -119,11 +191,11 @@ void CLI::handleList()
     nlohmann::json j = _db.readAll();
     std::cout << "\n";
     if (j.is_null() == true) {
-	std::cout << "no files have been hashed" << std::endl;
+        std::cout << "no files have been hashed" << std::endl;
     } else {
-	std::cout << j.dump(4) << std::endl;
+        std::cout << j.dump(4) << std::endl;
     }
-    std::cout << "\n";    
+    std::cout << "\n";
 }
 
 void CLI::checkConfig()
@@ -193,6 +265,16 @@ int CLI::start(int argc, char* argv[])
             return 1;
         }
         handleRemove(argv[2]);
+        break;
+    case SERVE:
+        if (argc != 3) {
+            std::cout << "please supply a hash to the [serve] command.\n"
+                      << std::endl;
+            printUsage();
+            std::cout << "\n";
+            return 1;
+        }
+        handleServe(argv[2]);
         break;
     default:
 

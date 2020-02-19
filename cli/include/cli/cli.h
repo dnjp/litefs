@@ -2,9 +2,9 @@
 #define __CLI_H_INCLUDED__
 
 // local
-#include "merkle/content.h"
-#include "cli/db.h"
 #include "cli/config.h"
+#include "cli/db.h"
+#include "merkle/content.h"
 #include "merkle/tree.h"
 
 // external
@@ -15,16 +15,18 @@
 
 class CLI {
 public:
-    CLI() {
-	// accepted commands
+    CLI()
+    {
+        // accepted commands
         _args["add"] = ADD;
-        _args["ls"] = LIST;
+        _args["status"] = LIST;
         _args["rm"] = REMOVE;
+        _args["serve"] = SERVE;	
     }
 
     int start(int, char**);
-private:
 
+private:
     // Merkle Tree Wrappers
     std::vector<Content> getContentListForPath(std::string);
     MerkleTree constructMerkleTree(std::vector<Content>);
@@ -37,13 +39,14 @@ private:
     // Command Line Operations
     void handleAdd(std::basic_string<char>);
     void handleRemove(std::basic_string<char> input);
-    void handleList();    
+    void handleList();
+    void handleServe(std::basic_string<char> input);
 
     // Storage Helpers
-    void persist(std::vector<Content> c, std::string root);
+    void persist(std::vector<Content> c, std::string root, std::string);
 
     // Command Line Arguments
-    enum _arguments { INVALID, ADD, LIST, REMOVE };
+    enum _arguments { INVALID, ADD, LIST, REMOVE, SERVE };
     std::map<std::string, _arguments> _args;
 
     // Database
