@@ -6,6 +6,7 @@
 #include "cli/db.h"
 #include "merkle/content.h"
 #include "merkle/tree.h"
+#include "server/server.h"
 
 // external
 #include <nlohmann/json.hpp>

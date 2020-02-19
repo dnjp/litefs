@@ -14,13 +14,14 @@ void CLI::persist(std::vector<Content> c, std::string root, std::string path)
     struct root e;
     e.root_path = path;
     for (auto content : c) {
-	struct elem l;
-    	l.content_hash = content.calculateHash();
-    	l.content_path = content.getPath();
-    	e.contents.push_back(l);
+        struct elem l;
+        l.content_hash = content.calculateHash();
+        l.content_path = content.getPath();
+        e.contents.push_back(l);
     }
 
-    j[root] = _db.toJson(e);;
+    j[root] = _db.toJson(e);
+    ;
     _db.write(j);
 }
 
@@ -105,16 +106,25 @@ void CLI::handleServe(std::basic_string<char> input)
     nlohmann::json j = _db.readAll();
 
     // returns an array of json objects
-    nlohmann::json contents = j[hash].get<nlohmann::json>();
-    struct root r = _db.fromJson(contents);
+    // nlohmann::json contents = j[hash].get<nlohmann::json>();
+    // struct root r = _db.fromJson(contents);
 
-    std::cout << "root_hash: " << hash << std::endl;
-    std::cout << "root_path: " << r.root_path << std::endl;
-    std::cout << "contents: " << std::endl;
-    for (auto c : r.contents) {
-	std::cout << "    content_hash: " << c.content_hash << std::endl;
-	std::cout << "    content_path: " << c.content_path << std::endl;	
-    }
+    // std::cout << "root_hash: " << hash << std::endl;
+    // std::cout << "root_path: " << r.root_path << std::endl;
+    // std::cout << "contents: " << std::endl;
+    // for (auto c : r.contents) {
+    //     std::cout << "    content_hash: " << c.content_hash << std::endl;
+    //     std::cout << "    content_path: " << c.content_path << std::endl;
+    // }
+
+    std::vector<endpoint> endpoints;
+    struct endpoint e;
+    e.path = "/hello";
+    e.content = "hello";
+    e.content_type = "text/plain";
+    endpoints.push_back(e);
+    Server svr = Server("localhost", 3000);
+    svr.start(endpoints);
 }
 
 void CLI::handleAdd(std::basic_string<char> input)

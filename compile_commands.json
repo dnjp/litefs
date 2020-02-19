@@ -20,23 +20,28 @@
   "file": "/home/daniel/src/personal/cpp/litefs/merkle_tree/src/hash.cc"
 },
 {
+  "directory": "/home/daniel/src/personal/cpp/litefs/build/server",
+  "command": "/usr/bin/c++   -I/home/daniel/src/personal/cpp/litefs -I/home/daniel/src/personal/cpp/litefs/server/include -I/home/daniel/src/personal/cpp/litefs/server/src -I/home/daniel/src/personal/cpp/litefs/thirdparty/cpp-httplib  -g   -std=gnu++17 -o CMakeFiles/libserver.dir/src/server.cc.o -c /home/daniel/src/personal/cpp/litefs/server/src/server.cc",
+  "file": "/home/daniel/src/personal/cpp/litefs/server/src/server.cc"
+},
+{
   "directory": "/home/daniel/src/personal/cpp/litefs/build/cli",
-  "command": "/usr/bin/c++   -I/home/daniel/src/personal/cpp/litefs -I/home/daniel/src/personal/cpp/litefs/cli/include -I/home/daniel/src/personal/cpp/litefs/cli/src -I/home/daniel/src/personal/cpp/litefs/merkle_tree/include -isystem /home/daniel/.hunter/_Base/c022f0c/bb25d6f/b085c90/Install/include  -g   -std=gnu++17 -o CMakeFiles/libcli.dir/src/cli.cc.o -c /home/daniel/src/personal/cpp/litefs/cli/src/cli.cc",
+  "command": "/usr/bin/c++   -I/home/daniel/src/personal/cpp/litefs -I/home/daniel/src/personal/cpp/litefs/cli/include -I/home/daniel/src/personal/cpp/litefs/cli/src -I/home/daniel/src/personal/cpp/litefs/merkle_tree/include -I/home/daniel/src/personal/cpp/litefs/server/include -I/home/daniel/src/personal/cpp/litefs/thirdparty/cpp-httplib -isystem /home/daniel/.hunter/_Base/c022f0c/bb25d6f/b085c90/Install/include  -g   -std=gnu++17 -o CMakeFiles/libcli.dir/src/cli.cc.o -c /home/daniel/src/personal/cpp/litefs/cli/src/cli.cc",
   "file": "/home/daniel/src/personal/cpp/litefs/cli/src/cli.cc"
 },
 {
   "directory": "/home/daniel/src/personal/cpp/litefs/build/cli",
-  "command": "/usr/bin/c++   -I/home/daniel/src/personal/cpp/litefs -I/home/daniel/src/personal/cpp/litefs/cli/include -I/home/daniel/src/personal/cpp/litefs/cli/src -I/home/daniel/src/personal/cpp/litefs/merkle_tree/include -isystem /home/daniel/.hunter/_Base/c022f0c/bb25d6f/b085c90/Install/include  -g   -std=gnu++17 -o CMakeFiles/libcli.dir/src/db.cc.o -c /home/daniel/src/personal/cpp/litefs/cli/src/db.cc",
+  "command": "/usr/bin/c++   -I/home/daniel/src/personal/cpp/litefs -I/home/daniel/src/personal/cpp/litefs/cli/include -I/home/daniel/src/personal/cpp/litefs/cli/src -I/home/daniel/src/personal/cpp/litefs/merkle_tree/include -I/home/daniel/src/personal/cpp/litefs/server/include -I/home/daniel/src/personal/cpp/litefs/thirdparty/cpp-httplib -isystem /home/daniel/.hunter/_Base/c022f0c/bb25d6f/b085c90/Install/include  -g   -std=gnu++17 -o CMakeFiles/libcli.dir/src/db.cc.o -c /home/daniel/src/personal/cpp/litefs/cli/src/db.cc",
   "file": "/home/daniel/src/personal/cpp/litefs/cli/src/db.cc"
 },
 {
   "directory": "/home/daniel/src/personal/cpp/litefs/build/cli",
-  "command": "/usr/bin/c++   -I/home/daniel/src/personal/cpp/litefs -I/home/daniel/src/personal/cpp/litefs/cli/include -I/home/daniel/src/personal/cpp/litefs/cli/src -I/home/daniel/src/personal/cpp/litefs/merkle_tree/include -isystem /home/daniel/.hunter/_Base/c022f0c/bb25d6f/b085c90/Install/include  -g   -std=gnu++17 -o CMakeFiles/libcli.dir/src/config.cc.o -c /home/daniel/src/personal/cpp/litefs/cli/src/config.cc",
+  "command": "/usr/bin/c++   -I/home/daniel/src/personal/cpp/litefs -I/home/daniel/src/personal/cpp/litefs/cli/include -I/home/daniel/src/personal/cpp/litefs/cli/src -I/home/daniel/src/personal/cpp/litefs/merkle_tree/include -I/home/daniel/src/personal/cpp/litefs/server/include -I/home/daniel/src/personal/cpp/litefs/thirdparty/cpp-httplib -isystem /home/daniel/.hunter/_Base/c022f0c/bb25d6f/b085c90/Install/include  -g   -std=gnu++17 -o CMakeFiles/libcli.dir/src/config.cc.o -c /home/daniel/src/personal/cpp/litefs/cli/src/config.cc",
   "file": "/home/daniel/src/personal/cpp/litefs/cli/src/config.cc"
 },
 {
   "directory": "/home/daniel/src/personal/cpp/litefs/build/lfs",
-  "command": "/usr/bin/c++   -I/home/daniel/src/personal/cpp/litefs -I/home/daniel/src/personal/cpp/litefs/cli/include -I/home/daniel/src/personal/cpp/litefs/merkle_tree/include -isystem /home/daniel/.hunter/_Base/c022f0c/bb25d6f/b085c90/Install/include  -g   -std=gnu++17 -o CMakeFiles/lfs.dir/main.cc.o -c /home/daniel/src/personal/cpp/litefs/lfs/main.cc",
+  "command": "/usr/bin/c++   -I/home/daniel/src/personal/cpp/litefs -I/home/daniel/src/personal/cpp/litefs/cli/include -I/home/daniel/src/personal/cpp/litefs/merkle_tree/include -I/home/daniel/src/personal/cpp/litefs/server/include -I/home/daniel/src/personal/cpp/litefs/thirdparty/cpp-httplib -isystem /home/daniel/.hunter/_Base/c022f0c/bb25d6f/b085c90/Install/include  -g   -std=gnu++17 -o CMakeFiles/lfs.dir/main.cc.o -c /home/daniel/src/personal/cpp/litefs/lfs/main.cc",
   "file": "/home/daniel/src/personal/cpp/litefs/lfs/main.cc"
 }
 ]
