@@ -101,18 +101,9 @@ void CLI::printUsage()
     std::cout << "\n";
 }
 
-void CLI::handleServe(std::basic_string<char> input)
+std::vector<endpoint> getEndpoints(
+    std::string host, int port, root r, std::string hash)
 {
-    std::string hash(input);
-    nlohmann::json j = _db.readAll();
-
-    // returns an array of stored json objects
-    nlohmann::json contents = j[hash].get<nlohmann::json>();
-    struct root r = _db.fromJson(contents);
-
-    // initialize server settings
-    std::string host = "localhost";
-    int port = 3000;
     std::vector<endpoint> endpoints;
 
     // construct root html page
@@ -160,8 +151,46 @@ void CLI::handleServe(std::basic_string<char> input)
     root.content_type = "text/html";
     endpoints.push_back(root);
 
-    Server svr = Server(host, port);
-    svr.start(endpoints);
+    return endpoints;
+}
+
+bool CLI::verifyContents(root r, std::string hash)
+{
+    std::vector<Content> contents = getContentListForPath(r.root_path);
+    MerkleTree tree = constructMerkleTree(contents);
+    return tree.getMerkleRoot() == hash;
+}
+
+void CLI::handleServe(std::basic_string<char> input)
+{
+    std::string hash(input);
+    nlohmann::json j = _db.readAll();
+
+    // returns an array of stored json objects
+    nlohmann::json contents = j[hash].get<nlohmann::json>();
+    struct root r = _db.fromJson(contents);
+
+    std::cout << "\n";
+    std::cout << "verifying contents of hash " << hash
+                  << std::endl;
+    std::cout << "\n";
+    
+    if (verifyContents(r, hash) == false) {
+        std::cout << "\n";
+        std::cout << "contents have been changed since being constructed."
+                  << std::endl;
+        std::cout << "please run 'lfs add <path>' to add the changed contents"
+                  << std::endl;
+        std::cout << "\n";
+    } else {
+        // initialize server settings
+        std::string host = "localhost";
+        int port = 3000;
+        std::vector<endpoint> endpoints = getEndpoints(host, port, r, hash);
+
+        Server svr = Server(host, port);
+        svr.start(endpoints);
+    }
 }
 
 void CLI::handleAdd(std::basic_string<char> input)

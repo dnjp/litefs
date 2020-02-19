@@ -31,6 +31,7 @@ private:
     // Merkle Tree Wrappers
     std::vector<Content> getContentListForPath(std::string);
     MerkleTree constructMerkleTree(std::vector<Content>);
+    bool verifyContents(root, std::string);
 
     // Standard Output Helpers
     void printTreeStats(MerkleTree, std::vector<Content>);
