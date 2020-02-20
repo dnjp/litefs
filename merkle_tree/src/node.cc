@@ -6,7 +6,7 @@ Node::Node(std::string h, Content c, bool isLeaf, MerkleTree* t)
     hash = h;
     content = c;
     _leaf = isLeaf;
-    _tree = t;
+    tree = t;
 }
 
 Node::Node(std::string h, Content c, bool isLeaf, bool dup, MerkleTree* t)
@@ -15,7 +15,7 @@ Node::Node(std::string h, Content c, bool isLeaf, bool dup, MerkleTree* t)
     content = c;
     _leaf = isLeaf;
     _dup = dup;
-    _tree = t;
+    tree = t;
 }
 
 Node::Node(Node* l, Node* r, std::string h, MerkleTree* t)
@@ -23,7 +23,7 @@ Node::Node(Node* l, Node* r, std::string h, MerkleTree* t)
     left = l;
     right = r;
     hash = h;
-    _tree = t;
+    tree = t;
 }
 
 std::string Node::verify()

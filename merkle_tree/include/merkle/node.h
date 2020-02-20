@@ -17,14 +17,16 @@ public:
     std::string calculateHash();
     std::string verify();
 
+    // Data Handles (non-owning)
     Node* parent = nullptr;
     Node* left = nullptr;
     Node* right = nullptr;
+    MerkleTree* tree = nullptr;
+    
     Content content = Content();
     std::string hash;
 
 private:
-    MerkleTree* _tree = nullptr;
     bool _leaf = false;
     bool _dup;
     std::string _digest;

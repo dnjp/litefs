@@ -26,7 +26,7 @@ void CLI::persist(std::vector<Content> c, std::string root, std::string path)
     _db.write(j);
 }
 
-// get directory from user
+// // get directory from user
 std::vector<Content> CLI::getContentListForPath(std::string path)
 {
     // read all file names in directory
@@ -44,37 +44,6 @@ MerkleTree CLI::constructMerkleTree(std::vector<Content> list)
 {
     MerkleTree t = MerkleTree(list);
     return t;
-}
-
-void CLI::printTreeStats(MerkleTree t, std::vector<Content> list)
-{
-    std::string root = t.getMerkleRoot();
-    std::cout << "\n";
-
-    if (t.verify() == false) {
-        std::cout << "error: tree is invalid." << std::endl;
-        return;
-    }
-    std::cout << "root hash: " << root << std::endl;
-    std::cout << "tree size: " << t.getLeafs().size() << std::endl;
-
-    for (int i = 0; i < list.size(); i++) {
-        Content c = list[i];
-        std::cout << "file: " << c.getPath() << std::endl;
-        std::cout << "      " << c.calculateHash() << std::endl;
-        std::cout << "\n";
-    }
-}
-
-void CLI::printMerklePathForContent(MerkleTree t, Content c)
-{
-    std::vector<std::tuple<std::string, int>> mpath = t.getMerklePath(c);
-    std::cout << "path size: " << mpath.size() << std::endl;
-    for (auto p : mpath) {
-        auto hash = std::get<0>(p);
-        auto idx = std::get<1>(p);
-        std::cout << idx << ": " << hash << std::endl;
-    }
 }
 
 void CLI::printUsage()
@@ -203,7 +172,23 @@ void CLI::handleAdd(std::basic_string<char> input)
 
     MerkleTree t = constructMerkleTree(list);
     persist(list, t.getMerkleRoot(), absPath);
-    printTreeStats(t, list);
+
+    std::string root = t.getMerkleRoot();
+    std::cout << "\n";
+
+    if (t.verify() == false) {
+        std::cout << "error: tree is invalid." << std::endl;
+        return;
+    }
+    std::cout << "root hash: " << root << std::endl;
+    std::cout << "tree size: " << t.getSize() << std::endl;
+
+    for (int i = 0; i < list.size(); i++) {
+        Content c = list[i];
+        std::cout << "file: " << c.getPath() << std::endl;
+        std::cout << "      " << c.calculateHash() << std::endl;
+        std::cout << "\n";
+    }    
 }
 
 void CLI::handleRemove(std::basic_string<char> input)
@@ -309,7 +294,7 @@ int CLI::start(int argc, char* argv[])
         handleServe(argv[2]);
         break;
     case HELP:
-	printUsage();
+    	printUsage();
         break;
     default:
 
