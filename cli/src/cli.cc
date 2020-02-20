@@ -48,27 +48,27 @@ MerkleTree CLI::constructMerkleTree(std::vector<Content> list)
 
 void CLI::printUsage()
 {
-    std::cout << "usage: litefs <command> <args>" << std::endl;
+    std::cout << "usage: lfs <command> <args>" << std::endl;
     std::cout << "\n";
     std::cout << "These are the common lfs commands:" << std::endl;
     std::cout << "\n";
-    std::cout
-        << "    add    <directory>   Add directory to stored stored hashes."
-        << std::endl;
-    std::cout << "\n";
-    std::cout
-        << "    status               List the hashes that are currently stored."
-        << std::endl;
-    std::cout << "\n";
-    std::cout
-        << "    rm     <hash>        Remove the selected hash from storage."
-        << std::endl;
-    std::cout << "\n";
-    std::cout << "    serve  <hash>        Serve the specified hash for "
-                 "network access"
+    std::cout << "    add    <directory>   Add directory to the local database "
+                 "of verified hashed contents."
               << std::endl;
     std::cout << "\n";
-    std::cout << "    help                 Show this usage message again."
+    std::cout << "    status               List the hashed content that is "
+                 "currently stored."
+              << std::endl;
+    std::cout << "\n";
+    std::cout << "    rm     <hash>        Remove the content with selected "
+                 "hash from database."
+              << std::endl;
+    std::cout << "\n";
+    std::cout << "    serve  <hash>        Serve the content with specified "
+                 "hash for network access"
+              << std::endl;
+    std::cout << "\n";
+    std::cout << "    help                 Show usage message."
               << std::endl;
     std::cout << "\n";
 }
@@ -121,6 +121,11 @@ std::vector<endpoint> getEndpoints(
 
     root.content = content.str();
     root.content_type = "text/html";
+
+    std::cout << "\n";
+    std::cout << "serving root at " << "http://" << host << ":" << port << "/" << hash << std::endl;
+    std::cout << "\n";
+    
     endpoints.push_back(root);
 
     return endpoints;
@@ -144,7 +149,6 @@ void CLI::handleServe(std::basic_string<char> input)
 
     std::cout << "\n";
     std::cout << "verifying contents of hash " << hash << std::endl;
-    std::cout << "\n";
 
     if (verifyContents(r, hash) == false) {
         std::cout << "\n";
@@ -188,7 +192,7 @@ void CLI::handleAdd(std::basic_string<char> input)
         std::cout << "file: " << c.getPath() << std::endl;
         std::cout << "      " << c.calculateHash() << std::endl;
         std::cout << "\n";
-    }    
+    }
 }
 
 void CLI::handleRemove(std::basic_string<char> input)
@@ -294,7 +298,7 @@ int CLI::start(int argc, char* argv[])
         handleServe(argv[2]);
         break;
     case HELP:
-    	printUsage();
+        printUsage();
         break;
     default:
 
