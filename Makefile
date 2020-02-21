@@ -5,4 +5,4 @@ install:
 uninstall:
 	sudo rm /usr/local/bin/lfs
 clean:
-	rm -rf build
+	rm -rf build install

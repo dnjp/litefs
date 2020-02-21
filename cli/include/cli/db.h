@@ -36,10 +36,8 @@ public:
     {
     }
 
-    ~DB() {
-	
-    }
-    
+    ~DB() {}
+
     virtual nlohmann::json readAll();
     virtual void setLocation(std::string loc) { location = loc; }
     virtual void write(nlohmann::json);
@@ -48,7 +46,7 @@ public:
 
     nlohmann::json toJson(root);
     root fromJson(nlohmann::json);
-    
+
     std::string location;
 };
 

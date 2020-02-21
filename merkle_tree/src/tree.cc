@@ -6,7 +6,11 @@
 #include <bits/stdc++.h>
 
 // The MerkleTree constructor takes a vector of contents to build the tree.
-MerkleTree::MerkleTree(std::vector<Content> contents) { build(contents); }
+MerkleTree::MerkleTree(std::vector<Content> contents)
+{
+    _contents = contents;
+    build(contents);
+}
 
 /*
  * `build()` takes the vector of contents and builds the tree, taking care to

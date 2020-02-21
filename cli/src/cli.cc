@@ -125,9 +125,10 @@ void CLI::printUsage()
     std::cout << "\n";
     std::cout << "These are the common lfs commands:" << std::endl;
     std::cout << "\n";
-    std::cout << "    add    <directories> Add directories to the local database "
-                 "of verified hashed contents."
-              << std::endl;
+    std::cout
+        << "    add    <directories> Add directories to the local database "
+           "of verified hashed contents."
+        << std::endl;
     std::cout << "\n";
     std::cout << "    status               List the hashed content that is "
                  "currently stored."
@@ -146,27 +147,53 @@ void CLI::printUsage()
 }
 
 /*
- * `handleAdd()` takes the paths the user submitted and constructs a
- * `MerkleTree` from the files in each directory.
+ * `handleAdd()` takes the paths the user submitted and asynchronously
+ * constructs a `MerkleTree` from the files in each directory.
  */
 void CLI::handleAdd(std::vector<std::string> dirs)
 {
-
     std::vector<std::thread> threads;
+    std::vector<std::future<MerkleTree>> futures;
+
     for (std::string path : dirs) {
-        threads.emplace_back(std::thread(&CLI::addDirectory, this, path));
+        std::promise<MerkleTree> prms;
+        std::future<MerkleTree> ftr = prms.get_future();
+        std::thread t(&CLI::addDirectory, this, std::move(prms), path);
+        threads.emplace_back(std::move(t));
+        futures.emplace_back(std::move(ftr));
     }
 
-    std::cout << "\n";    
+    std::cout << "\n";
     std::cout << "processing files... " << std::endl;
 
     // start timer
     std::chrono::high_resolution_clock::time_point t1
         = std::chrono::high_resolution_clock::now();
-    
+
     _ready = true;
     _cond.notify_all();
-    
+
+    for (auto& f : futures) {
+        MerkleTree t = f.get();
+        std::string root = t.getMerkleRoot();
+        std::cout << "\n";
+        if (t.verify() == false) {
+            std::cout << "error: tree is invalid." << std::endl;
+            return;
+        }
+        std::cout << "root hash: " << root << std::endl;
+        std::cout << "tree size: " << t.getSize() << std::endl;
+
+        for (auto c : t.getContents()) {
+            std::cout << "file: " << c.getPath() << std::endl;
+            std::cout << "      " << c.calculateHash() << std::endl;
+            std::cout << "      valid: "
+                      << (t.verifyContent(&c) == true ? "yes" : "no")
+                      << std::endl;
+            std::cout << "\n";
+        }
+    }
+
     for (auto& t : threads) {
         t.join();
     }
@@ -180,42 +207,26 @@ void CLI::handleAdd(std::vector<std::string> dirs)
               .count();
 
     std::cout << "Finished in " << duration << "ms" << std::endl;
-    std::cout << "\n";    
+    std::cout << "\n";
 }
 
 /*
  * `addDirectory()` constructs the merkle tree for a given path and uses a mutex
  * to lock the database to ensure data race does not occur
  */
-void CLI::addDirectory(std::string path)
+void CLI::addDirectory(std::promise<MerkleTree>&& prms, std::string path)
 {
     std::unique_lock<std::mutex> lck(_mutex);
-    while (_ready == false) _cond.wait(lck);
-    
+    while (_ready == false)
+        _cond.wait(lck);
+
     std::string absPath = fs::absolute(path).string();
     std::vector<Content> list = getContentListForPath(absPath);
 
     MerkleTree t = constructMerkleTree(list);
     persist(list, t.getMerkleRoot(), absPath);
 
-    std::string root = t.getMerkleRoot();
-    std::cout << "\n";
-
-    if (t.verify() == false) {
-        std::cout << "error: tree is invalid." << std::endl;
-        return;
-    }
-    std::cout << "root hash: " << root << std::endl;
-    std::cout << "tree size: " << t.getSize() << std::endl;
-
-    for (int i = 0; i < list.size(); i++) {
-        Content c = list[i];
-        std::cout << "file: " << c.getPath() << std::endl;
-        std::cout << "      " << c.calculateHash() << std::endl;
-        std::cout << "      valid: "
-                  << (t.verifyContent(&c) == true ? "yes" : "no") << std::endl;
-        std::cout << "\n";
-    }
+    prms.set_value(std::move(t));
 }
 
 /*
@@ -325,7 +336,8 @@ void CLI::handleServe(std::basic_string<char> input)
         // initialize server settings
         std::string host = "localhost";
         int port = 3000;
-        std::vector<Endpoint<std::string>> endpoints = getEndpoints(host, port, r, hash);
+        std::vector<Endpoint<std::string>> endpoints
+            = getEndpoints(host, port, r, hash);
 
         Server svr = Server(host, port);
         svr.start(endpoints);
@@ -377,11 +389,9 @@ std::vector<Endpoint<std::string>> CLI::getEndpoints(
     // end root page html
     content << "</body></html>";
 
-
     Endpoint<std::string> root("/" + hash, "text/html", content.str());
     std::cout << "serving root at "
               << "http://" << host << ":" << port << "/" << hash << std::endl;
-
 
     endpoints.push_back(root);
 

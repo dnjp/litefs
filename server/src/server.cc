@@ -7,7 +7,8 @@
  */
 void Server::start(std::vector<Endpoint<std::string>> endpoints)
 {
-    std::cout << "serving contents at " << _host << ":" << _port << "/" << std::endl;
+    std::cout << "serving contents at " << _host << ":" << _port << "/"
+              << std::endl;
 
     for (Endpoint e : endpoints) {
         _svr.Get(e.path.c_str(),

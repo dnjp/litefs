@@ -6,17 +6,19 @@
 #include "cli/db.h"
 #include "merkle/content.h"
 #include "merkle/tree.h"
-#include "server/server.h"
 #include "server/endpoint.h"
+#include "server/server.h"
 
 // external
 #include <nlohmann/json.hpp>
 
 // system
-#include <vector>
+#include <condition_variable>
+#include <future>
 #include <memory>
 #include <mutex>
-#include <condition_variable>
+#include <thread>
+#include <vector>
 
 /*
  * CLI contains the functionality for controlling interaction with the user
@@ -32,8 +34,8 @@ public:
         _args["serve"] = SERVE;
         _args["help"] = HELP;
 
-	_db = std::make_unique<DB>();
-	_cf = std::make_unique<Config>();	
+        _db = std::make_unique<DB>();
+        _cf = std::make_unique<Config>();
     }
 
     int start(int, char**);
@@ -57,7 +59,7 @@ private:
         std::string host, int port, root r, std::string hash);
 
     // General Helpers
-    void addDirectory(std::string);
+    void addDirectory(std::promise<MerkleTree>&& prms, std::string path);
 
     // Storage Helpers
     void persist(std::vector<Content> c, std::string root, std::string);

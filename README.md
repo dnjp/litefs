@@ -238,13 +238,14 @@ lfs
 
 * A promise and future is used to pass data from a worker thread to a parent
   thread in the project code.
+  See line 159 in `cli.cc`
 
 * A mutex or lock (e.g. std::lock_guard or `std::unique_lock) is used to protect
   data that is shared across multiple threads in the project code.
 
-  See line 194 of `cli.cc`
+  See line 219 of `cli.cc`
 
 * A std::condition_variable is used in the project code to synchronize thread
   execution.
 
-  See line 195 of `cli.cc`
+  See line 221 of `cli.cc`

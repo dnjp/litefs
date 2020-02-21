@@ -35,7 +35,7 @@ public:
     {
     }
 
-    /* 
+    /*
      * The constructor for instantiating Nodes to build out the lower levels of
      * the tree
      */

@@ -28,6 +28,7 @@ public:
     bool verify();
     bool verifyContent(Content*);
     int getSize() { return _leafs.size(); }
+    std::vector<Content> getContents() { return _contents; }
 
 private:
     void buildLeafs();
@@ -38,6 +39,7 @@ private:
     std::vector<Node*> getNodeDataHandles();
 
     std::string _merkleRoot;
+    std::vector<Content> _contents;
 
     // Data Handle (non-owned)
     Node* _root;

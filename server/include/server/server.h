@@ -32,9 +32,7 @@ public:
         , _port(port)
     {
     }
-    ~Server() {
-	stop();
-    }
+    ~Server() { stop(); }
 
     void start(std::vector<Endpoint<std::string>>);
     void stop();
