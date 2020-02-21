@@ -31,7 +31,7 @@ file: <path to repository>/sample/thankyou.txt
 Finished in 12ms
 ```
 
-Once I've added this directory, I can run `lfs status` to show the contents in
+Once I've added this directory, I can run `lfs status` to show the contents of
 my local database, which will print a message like this:
 
 ```
@@ -84,9 +84,11 @@ I will see a web page with links to the rest of the content being served.
 
 ## Building
 
-- git clone git@github.com:danieljamespost/litefs.git --recursive
-- make build
-- make install
+```
+$ git clone git@github.com:danieljamespost/litefs.git --recursive
+$ make build
+$ make install
+```
 
 ## Usage
 
