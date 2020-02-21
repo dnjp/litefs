@@ -24,9 +24,9 @@ public:
     MerkleTree(std::vector<Content>);
 
     std::string getMerkleRoot() { return _merkleRoot; }
-    std::vector<std::tuple<std::string, int>> getMerklePath(Content);
+    std::vector<std::tuple<std::string, int>> getMerklePath(Content*);
     bool verify();
-    bool verifyContent(Content);
+    bool verifyContent(Content*);
     int getSize() { return _leafs.size(); }
 
 private:

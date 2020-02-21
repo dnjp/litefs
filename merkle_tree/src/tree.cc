@@ -78,6 +78,7 @@ void MerkleTree::buildRoot(std::vector<Node*> handles)
     }
     buildRoot(nodes);
 }
+
 /*
  * `verify()` verifies that the resulting hash of constructing the tree matches
  * the hash of the root node.
@@ -88,11 +89,11 @@ bool MerkleTree::verify() { return _merkleRoot.compare(_root->verify()) == 0; }
  * `verifyContent()` takes a `Content` object and traverses the tree to see if
  * it can find content within it.
  */
-bool MerkleTree::verifyContent(Content content)
+bool MerkleTree::verifyContent(Content* content)
 {
     for (std::unique_ptr<Node>& l : _leafs) {
         // ensures that content matches one present in tree
-        if (l->content != content) {
+        if (l->content != *content) {
             continue;
         }
 
@@ -124,11 +125,11 @@ bool MerkleTree::verifyContent(Content content)
  * content.
  */
 std::vector<std::tuple<std::string, int>> MerkleTree::getMerklePath(
-    Content content)
+    Content* content)
 {
     std::vector<std::tuple<std::string, int>> merklePath;
     for (std::unique_ptr<Node>& n : _leafs) {
-        if (n->content != content) {
+        if (n->content != *content) {
             continue;
         }
         Node* node = n.get();

@@ -7,6 +7,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <thread>
 
 namespace fs = std::filesystem;
 
@@ -34,11 +35,13 @@ int CLI::start(int argc, char* argv[])
         return 1;
     }
 
-    std::string arg(argv[1]);
-    switch (_args[arg]) {
+    std::string command(argv[1]);
+    std::vector<std::string> args(argv + 2, argv + argc);
+
+    switch (_args[command]) {
     case ADD:
 
-        if (argc != 3) {
+        if (argc < 3) {
             std::cout << "please supply a path to the [add] command.\n"
                       << std::endl;
             printUsage();
@@ -46,7 +49,7 @@ int CLI::start(int argc, char* argv[])
             return 1;
         }
 
-        handleAdd(argv[2]);
+        handleAdd(args);
         break;
     case LIST:
         handleList();
@@ -76,7 +79,7 @@ int CLI::start(int argc, char* argv[])
         break;
     default:
 
-        std::cout << arg << " is not a valid command.\n" << std::endl;
+        std::cout << command << " is not a valid command.\n" << std::endl;
         printUsage();
         std::cout << "\n";
         return 1;
@@ -143,12 +146,45 @@ void CLI::printUsage()
 }
 
 /*
- * `handleAdd()` takes the path the user submitted and constructs a `MerkleTree`
- * from the files in that directory.
+ * `handleAdd()` takes the paths the user submitted and constructs a
+ * `MerkleTree` from the files in each directory.
  */
-void CLI::handleAdd(std::basic_string<char> input)
+void CLI::handleAdd(std::vector<std::string> dirs)
 {
-    std::string path(input);
+    // start timer
+    std::chrono::high_resolution_clock::time_point t1
+        = std::chrono::high_resolution_clock::now();
+
+    std::vector<std::thread> threads;
+    for (std::string path : dirs) {
+        threads.emplace_back(std::thread(&CLI::addDirectory, this, path));
+    }
+    std::cout << "processing files... " << std::endl;
+    std::cout << "\n";
+    for (auto& t : threads) {
+        t.join();
+    }
+
+    // stop timer
+    std::chrono::high_resolution_clock::time_point t2
+        = std::chrono::high_resolution_clock::now();
+
+    auto duration
+        = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1)
+              .count();
+
+    std::cout << "\n";
+    std::cout << "Finished in " << duration << "ms";
+}
+
+/*
+ * `addDirectory()` constructs the merkle tree for a given path and uses a mutex
+ * to lock the database to ensure data race does not occur
+ */
+void CLI::addDirectory(std::string path)
+{
+    // Uses mutex to ensure data race does not occur when writing to file
+    std::lock_guard<std::mutex> lck(_mutex);
     std::string absPath = fs::absolute(path).string();
     std::vector<Content> list = getContentListForPath(absPath);
 
@@ -169,6 +205,8 @@ void CLI::handleAdd(std::basic_string<char> input)
         Content c = list[i];
         std::cout << "file: " << c.getPath() << std::endl;
         std::cout << "      " << c.calculateHash() << std::endl;
+        std::cout << "      valid:"
+                  << (t.verifyContent(&c) == true ? "yes" : "no") << std::endl;
         std::cout << "\n";
     }
 }
@@ -343,7 +381,6 @@ std::vector<endpoint> CLI::getEndpoints(
     std::cout << "\n";
     std::cout << "serving root at "
               << "http://" << host << ":" << port << "/" << hash << std::endl;
-    std::cout << "\n";
 
     endpoints.push_back(root);
 

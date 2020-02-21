@@ -14,6 +14,8 @@
 // system
 #include <vector>
 #include <memory>
+#include <mutex>
+#include <condition_variable>
 
 /*
  * CLI contains the functionality for controlling interaction with the user
@@ -42,17 +44,19 @@ private:
     bool verifyContents(root, std::string);
 
     // Standard Output Helpers
-    void printTreeStats(MerkleTree, std::vector<Content>);
     void printMerklePathForContent(MerkleTree t, Content c);
     void printUsage();
 
     // Command Line Operations
-    void handleAdd(std::basic_string<char>);
+    void handleAdd(std::vector<std::string>);
     void handleRemove(std::basic_string<char> input);
     void handleList();
     void handleServe(std::basic_string<char> input);
     std::vector<endpoint> getEndpoints(
         std::string host, int port, root r, std::string hash);
+
+    // General Helpers
+    void addDirectory(std::string);
 
     // Storage Helpers
     void persist(std::vector<Content> c, std::string root, std::string);
@@ -68,6 +72,10 @@ private:
     // Configuration
     std::unique_ptr<Config> _cf;
     void checkConfig();
+
+    // Handle async code
+    std::mutex _mutex;
+    std::condition_variable _cond;
 };
 
 #endif
