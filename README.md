@@ -223,11 +223,12 @@ configuration file for LiteFS.
 - The project follows the Resource Acquisition Is Initialization pattern where
   appropriate, by allocating objects at compile-time, initializing objects when
   they are declared, and utilizing scope to ensure their automatic destruction.
-  **TODO**
+  See lines 27-34 of `server.h`
 
 - For all classes, if any one of the copy constructor, copy assignment operator,
   move constructor, move assignment operator, and destructor are defined, then
   all of these functions are defined.
+
   Not needed
 
 - For classes with move constructors, the project returns objects of that class
@@ -239,7 +240,7 @@ configuration file for LiteFS.
   See `_leafs` in `tree.h` and `tree.cc`
 
 * The project uses multiple threads in the execution.
-  See line 158 in `cli.cc`
+  See line 155 in `cli.cc`
 
 * A promise and future is used to pass data from a worker thread to a parent
   thread in the project code.
@@ -247,7 +248,9 @@ configuration file for LiteFS.
 * A mutex or lock (e.g. std::lock_guard or `std::unique_lock) is used to protect
   data that is shared across multiple threads in the project code.
 
-  See line 187 of`cli.cc`
+  See line 194 of `cli.cc`
 
 * A std::condition_variable is used in the project code to synchronize thread
   execution.
+
+  See line 195 of `cli.cc`

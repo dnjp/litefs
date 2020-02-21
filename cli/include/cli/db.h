@@ -35,6 +35,11 @@ public:
         : location(loc)
     {
     }
+
+    ~DB() {
+	
+    }
+    
     virtual nlohmann::json readAll();
     virtual void setLocation(std::string loc) { location = loc; }
     virtual void write(nlohmann::json);

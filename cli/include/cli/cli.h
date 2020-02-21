@@ -76,6 +76,7 @@ private:
     // Handle async code
     std::mutex _mutex;
     std::condition_variable _cond;
+    bool _ready = false;
 };
 
 #endif

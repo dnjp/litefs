@@ -151,16 +151,23 @@ void CLI::printUsage()
  */
 void CLI::handleAdd(std::vector<std::string> dirs)
 {
-    // start timer
-    std::chrono::high_resolution_clock::time_point t1
-        = std::chrono::high_resolution_clock::now();
 
     std::vector<std::thread> threads;
     for (std::string path : dirs) {
         threads.emplace_back(std::thread(&CLI::addDirectory, this, path));
     }
+
+    std::cout << "\n";    
     std::cout << "processing files... " << std::endl;
-    std::cout << "\n";
+    std::cout << "\n";    
+
+    // start timer
+    std::chrono::high_resolution_clock::time_point t1
+        = std::chrono::high_resolution_clock::now();
+    
+    _ready = true;
+    _cond.notify_all();
+    
     for (auto& t : threads) {
         t.join();
     }
@@ -174,7 +181,8 @@ void CLI::handleAdd(std::vector<std::string> dirs)
               .count();
 
     std::cout << "\n";
-    std::cout << "Finished in " << duration << "ms";
+    std::cout << "Finished in " << duration << "ms" << std::endl;
+    std::cout << "\n";    
 }
 
 /*
@@ -183,8 +191,9 @@ void CLI::handleAdd(std::vector<std::string> dirs)
  */
 void CLI::addDirectory(std::string path)
 {
-    // Uses mutex to ensure data race does not occur when writing to file
-    std::lock_guard<std::mutex> lck(_mutex);
+    std::unique_lock<std::mutex> lck(_mutex);
+    while (_ready == false) _cond.wait(lck);
+    
     std::string absPath = fs::absolute(path).string();
     std::vector<Content> list = getContentListForPath(absPath);
 
