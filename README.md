@@ -85,7 +85,7 @@ I will see a web page with links to the rest of the content being served.
 ## Building
 
 ```
-$ git clone git@github.com:danieljamespost/litefs.git --recursive
+$ git clone https://github.com/danieljamespost/litefs.git --recursive
 $ make build
 $ make install
 ```
