@@ -1,31 +1,33 @@
+// internal
 #include "merkle/node.h"
+
+// system
 #include <iostream>
 
-Node::Node(std::string h, Content c, bool isLeaf, MerkleTree* t)
+/*
+ * `calculateHash()` hashes the combined hashes of its sibling nodes and stores
+ * it when it is not a leaf node, otherwise it returns the hash of its content.
+ */
+std::string Node::calculateHash()
 {
-    hash = h;
-    content = c;
-    _leaf = isLeaf;
-    tree = t;
+    if (_leaf) {
+        return content.calculateHash();
+    }
+
+    std::string lHash = left->hash;
+    std::string rHash = right->hash;
+    std::string cHash = lHash + rHash;
+
+    Hash h = Hash(cHash);
+    h.final();
+    _digest = h.calculate();
+    return _digest;
 }
 
-Node::Node(std::string h, Content c, bool isLeaf, bool dup, MerkleTree* t)
-{
-    hash = h;
-    content = c;
-    _leaf = isLeaf;
-    _dup = dup;
-    tree = t;
-}
-
-Node::Node(Node* l, Node* r, std::string h, MerkleTree* t)
-{
-    left = l;
-    right = r;
-    hash = h;
-    tree = t;
-}
-
+/*
+ * `verify()` verifies its sibling nodes and returns the hash of their combined
+ * hashes.
+ */
 std::string Node::verify()
 {
     if (_leaf) {
@@ -41,20 +43,4 @@ std::string Node::verify()
     Hash hash = Hash(cHash);
     hash.final();
     return hash.calculate();
-}
-
-std::string Node::calculateHash()
-{
-    if (_leaf) {
-        return content.calculateHash();
-    }
-
-    std::string lHash = left->hash;
-    std::string rHash = right->hash;
-    std::string cHash = lHash + rHash;
-
-    Hash h = Hash(cHash);
-    h.final();
-    _digest = h.calculate();
-    return _digest;
 }

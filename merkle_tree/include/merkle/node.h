@@ -4,15 +4,48 @@
 class MerkleTree;
 class Content;
 
+// internal
 #include "merkle/content.h"
 #include "merkle/hash.h"
 #include "merkle/tree.h"
 
+/*
+ * The `Node` class is the fundamental building block of the merkle tree. A
+ * `Node` contains data handles to its parent, sibling nodes, and the tree that
+ * owns it.
+ */
 class Node {
 public:
-    Node(std::string, Content, bool, MerkleTree*);
-    Node(std::string, Content, bool, bool, MerkleTree*);
-    Node(Node*, Node*, std::string, MerkleTree*);
+    // The primary constructor for a `Node`
+    Node(std::string h, Content c, bool isLeaf, MerkleTree* t)
+        : hash(h)
+        , content(c)
+        , _leaf(isLeaf)
+        , tree(t)
+    {
+    }
+
+    // The constructor for a duplicate `Node` to maintain a balanced tree
+    Node(std::string h, Content c, bool isLeaf, bool dup, MerkleTree* t)
+        : hash(h)
+        , content(c)
+        , _leaf(isLeaf)
+        , _dup(dup)
+        , tree(t)
+    {
+    }
+
+    /* 
+     * The constructor for instantiating Nodes to build out the lower levels of
+     * the tree
+     */
+    Node(Node* l, Node* r, std::string h, MerkleTree* t)
+        : left(l)
+        , right(r)
+        , hash(h)
+        , tree(t)
+    {
+    }
 
     std::string calculateHash();
     std::string verify();
@@ -22,7 +55,7 @@ public:
     Node* left = nullptr;
     Node* right = nullptr;
     MerkleTree* tree = nullptr;
-    
+
     Content content = Content();
     std::string hash;
 

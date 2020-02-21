@@ -1,9 +1,17 @@
+// internal
 #include "merkle/tree.h"
 #include "merkle/content.h"
+
+// system
 #include <bits/stdc++.h>
 
+// The MerkleTree constructor takes a vector of contents to build the tree.
 MerkleTree::MerkleTree(std::vector<Content> contents) { build(contents); }
 
+/*
+ * `build()` takes the vector of contents and builds the tree, taking care to
+ * duplicate a node if the conents are not even.
+ */
 void MerkleTree::build(std::vector<Content> contents)
 {
     if (contents.size() == 0) {
@@ -24,14 +32,19 @@ void MerkleTree::build(std::vector<Content> contents)
     buildRoot(getNodeDataHandles());
 }
 
-std::vector<Node*> MerkleTree::getNodeDataHandles() {
+std::vector<Node*> MerkleTree::getNodeDataHandles()
+{
     std::vector<Node*> nodeHandles;
     for (std::unique_ptr<Node>& n : _leafs) {
-	nodeHandles.push_back(n.get());
+        nodeHandles.push_back(n.get());
     }
     return nodeHandles;
 }
 
+/*
+ * `buildRoot()` takes a vector of data handles to `Nodes` and recursively
+ * iterates through them to construct the tree from the bottom up.
+ */
 void MerkleTree::buildRoot(std::vector<Node*> handles)
 {
     std::vector<Node*> nodes;
@@ -50,7 +63,8 @@ void MerkleTree::buildRoot(std::vector<Node*> handles)
         // create new node with the hashed value
         Hash hash = Hash(cHash);
         hash.final();
-        Node* n = new Node(handles[left], handles[right], hash.calculate(), this);
+        Node* n
+            = new Node(handles[left], handles[right], hash.calculate(), this);
 
         nodes.push_back(n);
         handles[left]->parent = n;
@@ -64,9 +78,16 @@ void MerkleTree::buildRoot(std::vector<Node*> handles)
     }
     buildRoot(nodes);
 }
-
+/*
+ * `verify()` verifies that the resulting hash of constructing the tree matches
+ * the hash of the root node.
+ */
 bool MerkleTree::verify() { return _merkleRoot.compare(_root->verify()) == 0; }
 
+/*
+ * `verifyContent()` takes a `Content` object and traverses the tree to see if
+ * it can find content within it.
+ */
 bool MerkleTree::verifyContent(Content content)
 {
     for (std::unique_ptr<Node>& l : _leafs) {
@@ -76,7 +97,7 @@ bool MerkleTree::verifyContent(Content content)
         }
 
         // validates hashes are valid for tree
-        Node* leaf = l.get(); 
+        Node* leaf = l.get();
         Node* parent = leaf->parent;
         while (parent != nullptr) {
             std::string lHash = parent->left->calculateHash();
@@ -98,6 +119,10 @@ bool MerkleTree::verifyContent(Content content)
     return false;
 }
 
+/*
+ * `getMerklePath()` takes a `Content` object and returns an indexed path to the
+ * content.
+ */
 std::vector<std::tuple<std::string, int>> MerkleTree::getMerklePath(
     Content content)
 {

@@ -157,3 +157,66 @@ The `cli` library is focused on capturing user input (line 243 of `cli.cc`),
 reading (line 8 of `db.cc`) and writing data (line 15). The `Config` class
 inherits from `DB` and implements the functionality of `DB` to read and write the
 configuration file for LiteFS.
+
+- A variety of control structures are used in the project.
+  Any of the \*.cc source files
+
+- The project code is clearly organized into functions.
+  Any of the \*.cc source files
+
+- The project reads data from an external file or writes data to a file as part
+  of the necessary operation of the program.
+  line 37 & 48 of `db.cc`
+
+- The project accepts input from a user as part of the necessary operation of
+  the program.
+  line 17 of `cli.cc`
+
+- The project code is organized into classes with class attributes to hold the
+  data, and class methods to perform tasks.
+  See diagram above
+
+- All class data members are explicitly specified as public, protected, or
+  private.
+  See any of the \*.h source files
+
+- All class members that are set to argument values are initialized through
+  member initialization lists.
+  See lines 20, 29, and 42 of `node.h` and line 18 of `content.h`
+
+- All class member functions document their effects, either through function
+  names, comments, or formal documentation. Member functions do not change
+  program state in undocumented ways.
+  See inline documentation in all source files
+
+- Appropriate data and functions are grouped into classes. Member data that is
+  subject to an invariant is hidden from the user. State is accessed via member
+  functions.
+  See any of the \*.h source files
+
+- Inheritance hierarchies are logical. Composition is used instead of
+  inheritance when appropriate. Abstract classes are composed of pure virtual
+  functions. Override functions are specified.
+  See `tree.h`, `db.h`, and `config.h`
+
+- One function is overloaded with different signatures for the same function
+  name.
+  See multiple constructors for the `Node` class in `node.h`
+
+- One member function in an inherited class overrides a virtual base class
+  member function.
+  See lines 38-42 in `db.h`
+
+- One function is declared with a template that allows it to accept a generic
+  parameter.
+
+- At least two variables are defined as references, or two functions use pass-by-reference in the project code.
+- At least one class that uses unmanaged dynamically allocated memory, along with any class that otherwise needs to modify state upon the termination of an object, uses a destructor.
+- The project follows the Resource Acquisition Is Initialization pattern where appropriate, by allocating objects at compile-time, initializing objects when they are declared, and utilizing scope to ensure their automatic destruction.
+- For all classes, if any one of the copy constructor, copy assignment operator, move constructor, move assignment operator, and destructor are defined, then all of these functions are defined.
+- For classes with move constructors, the project returns objects of that class by value, and relies on the move constructor, instead of copying the object.
+- The project uses at least one smart pointer: unique_ptr, shared_ptr, or weak_ptr. The project does not use raw pointers.
+- The project uses multiple threads in the execution.
+- A promise and future is used to pass data from a worker thread to a parent thread in the project code.
+- A mutex or lock (e.g. std::lock_guard or `std::unique_lock) is used to protect data that is shared across multiple threads in the project code.
+- A std::condition_variable is used in the project code to synchronize thread execution.

@@ -1,7 +1,7 @@
 #ifndef __CLI_H_INCLUDED__
 #define __CLI_H_INCLUDED__
 
-// local
+// internal
 #include "cli/config.h"
 #include "cli/db.h"
 #include "merkle/content.h"
@@ -13,7 +13,11 @@
 
 // system
 #include <vector>
+#include <memory>
 
+/*
+ * CLI contains the functionality for controlling interaction with the user
+ */
 class CLI {
 public:
     CLI()
@@ -23,7 +27,10 @@ public:
         _args["status"] = LIST;
         _args["rm"] = REMOVE;
         _args["serve"] = SERVE;
-        _args["help"] = HELP;		
+        _args["help"] = HELP;
+
+	_db = std::make_unique<DB>();
+	_cf = std::make_unique<Config>();	
     }
 
     int start(int, char**);
@@ -44,6 +51,8 @@ private:
     void handleRemove(std::basic_string<char> input);
     void handleList();
     void handleServe(std::basic_string<char> input);
+    std::vector<endpoint> getEndpoints(
+        std::string host, int port, root r, std::string hash);
 
     // Storage Helpers
     void persist(std::vector<Content> c, std::string root, std::string);
@@ -53,11 +62,11 @@ private:
     std::map<std::string, _arguments> _args;
 
     // Database
-    DB _db;
+    std::unique_ptr<DB> _db;
     void checkDB();
 
     // Configuration
-    Config _cf;
+    std::unique_ptr<Config> _cf;
     void checkConfig();
 };
 
