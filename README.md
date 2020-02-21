@@ -12,16 +12,23 @@ tree](https://en.wikipedia.org/wiki/Merkle_tree) with the contents. The output
 of this command will look like the following:
 
 ```
+processing files...
+
 root hash: 5A826CAAE5EC0B00715C2AA531A609B9A723331C6D1582607D3B5D00D1578831
 tree size: 4
 file: <path to repository>/sample/contact.txt
-    4611E497F75197329529C008CD24870537EF4D25CFD4C7A00FE6EE7509564209
+      4611E497F75197329529C008CD24870537EF4D25CFD4C7A00FE6EE7509564209
+      valid: yes
 
 file: <path to repository>/sample/dir/example.txt
-    F5425CC8E871BC92F8AC98C75F0D476E616F39D7F06C524C0977B7668E65C7C7
+      F5425CC8E871BC92F8AC98C75F0D476E616F39D7F06C524C0977B7668E65C7C7
+      valid: yes
 
 file: <path to repository>/sample/thankyou.txt
-    59D18234574B211D25FC5D224F85CC8687525CEC19190F7864C2081712A17A9E
+      59D18234574B211D25FC5D224F85CC8687525CEC19190F7864C2081712A17A9E
+      valid: yes
+
+Finished in 12ms
 ```
 
 Once I've added this directory, I can run `lfs status` to show the contents in
@@ -55,12 +62,8 @@ they haven't changed, it will print this message:
 
 ```
 verifying contents of hash 5A826CAAE5EC0B00715C2AA531A609B9A723331C6D1582607D3B5D00D1578831
-
 serving root at http://localhost:3000/5A826CAAE5EC0B00715C2AA531A609B9A723331C6D1582607D3B5D00D1578831
-
-serving at localhost:3000/
-
-contents:
+serving contents at localhost:3000/
 
 localhost:3000/4611E497F75197329529C008CD24870537EF4D25CFD4C7A00FE6EE7509564209
 localhost:3000/F5425CC8E871BC92F8AC98C75F0D476E616F39D7F06C524C0977B7668E65C7C7
@@ -92,7 +95,7 @@ lfs <command> <args>
 
 These are the common lfs commands:
 
-    add    <directory>   Add directory to the local database of verified hashed contents.
+    add    <directories> Add directories to the local database of verified hashed contents.
 
     status               List the hashed content that is currently stored.
 
@@ -111,52 +114,44 @@ encapsulates its functionality. Here is a partial output of the `tree` command
 to show how this is structured.
 
 ```
-├── cli
-│   ├── CMakeLists.txt
-│   ├── include
-│   │   └── cli
-│   │       ├── cli.h
-│   │       ├── conf.h
-│   │       ├── config.h
-│   │       └── db.h
-│   └── src
-│       ├── cli.cc
-│       ├── config.cc
-│       └── db.cc
-├── CMakeLists.txt
-├── lfs
-│   ├── CMakeLists.txt
-│   └── main.cc
-├── Makefile
-├── merkle_tree
-│   ├── CMakeLists.txt
-│   ├── include
-│   │   └── merkle
-│   │       ├── content.h
-│   │       ├── hash.h
-│   │       ├── node.h
-│   │       └── tree.h
-│   └── src
-│       ├── content.cc
-│       ├── hash.cc
-│       ├── node.cc
-│       └── tree.cc
+cli
+ ├── include
+ │   └── cli
+ │       ├── cli.h
+ │       ├── config.h
+ │       └── db.h
+ └── src
+     ├── cli.cc
+     ├── config.cc
+     └── db.cc
+lfs
+ └── main.cc
+ merkle_tree
+ │   include
+ │   └── merkle
+ │       ├── content.h
+ │       ├── hash.h
+ │       ├── node.h
+ │       └── tree.h
+ └── src
+     ├── content.cc
+     ├── hash.cc
+     ├── node.cc
+     └── tree.cc
+ sample
+ │   contact.txt
+ │   dir
+ │   └── example.txt
+ └── thankyou.txt
+ server
+ │   include
+ │   └── server
+ │       ├── endpoint.h
+ │       └── server.h
+ └── src
+     ├── endpoint.cc
+     └── server.cc
 ```
-
-The `merkle_tree` library is the focal point of the project. Within
-`merkle_tree` you'll find the `MerkleTree` class in `tree.h` which contains a
-vector of `unique_ptrs` (line 35) to the `Node` class (found in `node.h`).
-`Node` contains the `Content` (defined in `content.h`) and holds data handles to
-the `MerkleTree`, parent, left, and right `Nodes` and its own `hash`. `Node`
-also contains multiple constructors for instantiating leaf `Nodes` and `Nodes` as a duplicate
-of another `Node` (lines 14 & 15 in `node.h`). `Content`
-in turn holds the `Hash` (defined in `hash.h`) and functions for comparison,
-and accessing the hash.
-
-The `cli` library is focused on capturing user input (line 243 of `cli.cc`),
-reading (line 8 of `db.cc`) and writing data (line 15). The `Config` class
-inherits from `DB` and implements the functionality of `DB` to read and write the
-configuration file for LiteFS.
 
 - A variety of control structures are used in the project.
   Any of the \*.cc source files
@@ -170,7 +165,7 @@ configuration file for LiteFS.
 
 - The project accepts input from a user as part of the necessary operation of
   the program.
-  line 17 of `cli.cc`
+  line 18 of `cli.cc`
 
 - The project code is organized into classes with class attributes to hold the
   data, and class methods to perform tasks.
@@ -182,7 +177,7 @@ configuration file for LiteFS.
 
 - All class members that are set to argument values are initialized through
   member initialization lists.
-  See lines 20, 29, and 42 of `node.h` and line 18 of `content.h`
+  See `node.h`, `content.h`, `endpoint.h`
 
 - All class member functions document their effects, either through function
   names, comments, or formal documentation. Member functions do not change
@@ -209,7 +204,7 @@ configuration file for LiteFS.
 
 - One function is declared with a template that allows it to accept a generic
   parameter.
-  **TODO**
+  See "endpoint.h"
 
 - At least two variables are defined as references, or two functions use
   pass-by-reference in the project code.
@@ -218,7 +213,7 @@ configuration file for LiteFS.
 - At least one class that uses unmanaged dynamically allocated memory, along
   with any class that otherwise needs to modify state upon the termination of an
   object, uses a destructor.
-  Not needed
+  See `server.h`
 
 - The project follows the Resource Acquisition Is Initialization pattern where
   appropriate, by allocating objects at compile-time, initializing objects when
@@ -228,12 +223,11 @@ configuration file for LiteFS.
 - For all classes, if any one of the copy constructor, copy assignment operator,
   move constructor, move assignment operator, and destructor are defined, then
   all of these functions are defined.
-
-  Not needed
+  Not used
 
 - For classes with move constructors, the project returns objects of that class
   by value, and relies on the move constructor, instead of copying the object.
-  Not needed
+  Not used
 
 - The project uses at least one smart pointer: unique_ptr, shared_ptr, or
   weak_ptr. The project does not use raw pointers.

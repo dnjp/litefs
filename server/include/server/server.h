@@ -1,6 +1,9 @@
 #ifndef __SERVER_H_INCLUDED__
 #define __SERVER_H_INCLUDED__
 
+// internal
+#include "server/endpoint.h"
+
 // system
 #include <string>
 
@@ -33,7 +36,7 @@ public:
 	stop();
     }
 
-    void start(std::vector<endpoint>);
+    void start(std::vector<Endpoint<std::string>>);
     void stop();
 
 private:

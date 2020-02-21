@@ -5,17 +5,14 @@
  * `start()` launches the server and iterates through the `endpoint` objects,
  * serving their content at the specified path
  */
-void Server::start(std::vector<endpoint> endpoints)
+void Server::start(std::vector<Endpoint<std::string>> endpoints)
 {
-    std::cout << "\n";
-    std::cout << "contents: \n" << std::endl;
-    std::cout << "\n";
-    std::cout << "serving at " << _host << ":" << _port << "/" << std::endl;
+    std::cout << "serving contents at " << _host << ":" << _port << "/" << std::endl;
 
-    for (endpoint e : endpoints) {
+    for (Endpoint e : endpoints) {
         _svr.Get(e.path.c_str(),
             [e](const httplib::Request& req, httplib::Response& res) {
-                res.set_content(e.content, e.content_type.c_str());
+                res.set_content(e.content, e.type.c_str());
             });
         std::cout << _host << ":" << _port << e.path << std::endl;
     }

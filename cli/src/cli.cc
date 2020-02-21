@@ -125,7 +125,7 @@ void CLI::printUsage()
     std::cout << "\n";
     std::cout << "These are the common lfs commands:" << std::endl;
     std::cout << "\n";
-    std::cout << "    add    <directory>   Add directory to the local database "
+    std::cout << "    add    <directories> Add directories to the local database "
                  "of verified hashed contents."
               << std::endl;
     std::cout << "\n";
@@ -159,7 +159,6 @@ void CLI::handleAdd(std::vector<std::string> dirs)
 
     std::cout << "\n";    
     std::cout << "processing files... " << std::endl;
-    std::cout << "\n";    
 
     // start timer
     std::chrono::high_resolution_clock::time_point t1
@@ -180,7 +179,6 @@ void CLI::handleAdd(std::vector<std::string> dirs)
         = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1)
               .count();
 
-    std::cout << "\n";
     std::cout << "Finished in " << duration << "ms" << std::endl;
     std::cout << "\n";    
 }
@@ -214,7 +212,7 @@ void CLI::addDirectory(std::string path)
         Content c = list[i];
         std::cout << "file: " << c.getPath() << std::endl;
         std::cout << "      " << c.calculateHash() << std::endl;
-        std::cout << "      valid:"
+        std::cout << "      valid: "
                   << (t.verifyContent(&c) == true ? "yes" : "no") << std::endl;
         std::cout << "\n";
     }
@@ -327,7 +325,7 @@ void CLI::handleServe(std::basic_string<char> input)
         // initialize server settings
         std::string host = "localhost";
         int port = 3000;
-        std::vector<endpoint> endpoints = getEndpoints(host, port, r, hash);
+        std::vector<Endpoint<std::string>> endpoints = getEndpoints(host, port, r, hash);
 
         Server svr = Server(host, port);
         svr.start(endpoints);
@@ -338,14 +336,12 @@ void CLI::handleServe(std::basic_string<char> input)
  * `getEndpoints()` constructs a vector of `endpoint` objects containing the
  * html elements derived from the `Content` objects for the given root hash
  */
-std::vector<endpoint> CLI::getEndpoints(
+std::vector<Endpoint<std::string>> CLI::getEndpoints(
     std::string host, int port, root r, std::string hash)
 {
-    std::vector<endpoint> endpoints;
+    std::vector<Endpoint<std::string>> endpoints;
 
     // construct root html page
-    struct endpoint root;
-    root.path = "/" + hash;
     std::stringstream content;
 
     // start root page html
@@ -366,10 +362,7 @@ std::vector<endpoint> CLI::getEndpoints(
              << "<div>" << textContent << "</div>"
              << "</body></html>";
 
-        struct endpoint e;
-        e.path = "/" + c.content_hash;
-        e.content = html.str();
-        e.content_type = "text/html";
+        Endpoint<std::string> e("/" + c.content_hash, "text/html", html.str());
 
         endpoints.push_back(e);
 
@@ -384,12 +377,11 @@ std::vector<endpoint> CLI::getEndpoints(
     // end root page html
     content << "</body></html>";
 
-    root.content = content.str();
-    root.content_type = "text/html";
 
-    std::cout << "\n";
+    Endpoint<std::string> root("/" + hash, "text/html", content.str());
     std::cout << "serving root at "
               << "http://" << host << ":" << port << "/" << hash << std::endl;
+
 
     endpoints.push_back(root);
 

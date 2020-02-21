@@ -7,6 +7,7 @@
 #include "merkle/content.h"
 #include "merkle/tree.h"
 #include "server/server.h"
+#include "server/endpoint.h"
 
 // external
 #include <nlohmann/json.hpp>
@@ -52,7 +53,7 @@ private:
     void handleRemove(std::basic_string<char> input);
     void handleList();
     void handleServe(std::basic_string<char> input);
-    std::vector<endpoint> getEndpoints(
+    std::vector<Endpoint<std::string>> getEndpoints(
         std::string host, int port, root r, std::string hash);
 
     // General Helpers
