@@ -139,13 +139,13 @@ std::vector<std::tuple<std::string, int>> MerkleTree::getMerklePath(
         Node* node = n.get();
         Node* parent = node->parent;
         while (parent != NULLPTR) {
-	    std::tuple<std::string, int> item;
+
             if (parent->left->calculateHash().compare(parent->calculateHash())
                 == 0) {
-		item = { parent->right->calculateHash(), 1 };
+		std::tuple<std::string, int> item { parent->right->calculateHash(), 1 };
                 merklePath.push_back(item);
             } else {
-		item = { parent->right->calculateHash(), 0 };
+		std::tuple<std::string, int> item { parent->right->calculateHash(), 0 };
                 merklePath.push_back(item);
             }
             node = parent;

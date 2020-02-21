@@ -80,7 +80,7 @@ I will see a web page with links to the rest of the content being served.
 
 - cmake >= 3.9.3
 - make >= 4.1 (Linux, Mac), 3.81 (Windows)
-- gcc/g++ >= 5.4
+- gcc/g++ >= 8.3
 
 ## Building
 

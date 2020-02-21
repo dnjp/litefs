@@ -335,7 +335,7 @@ void CLI::handleServe(std::basic_string<char> input)
     } else {
         // initialize server settings
         std::string host = "localhost";
-        int port = 3000;
+        int port = 8080;
         std::vector<Endpoint<std::string>> endpoints
             = getEndpoints(host, port, r, hash);
 

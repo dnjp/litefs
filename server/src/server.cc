@@ -10,7 +10,7 @@ void Server::start(std::vector<Endpoint<std::string>> endpoints)
     std::cout << "serving contents at " << _host << ":" << _port << "/"
               << std::endl;
 
-    for (Endpoint e : endpoints) {
+    for (Endpoint<std::string> e : endpoints) {
         _svr.Get(e.path.c_str(),
             [e](const httplib::Request& req, httplib::Response& res) {
                 res.set_content(e.content, e.type.c_str());
