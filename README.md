@@ -1,9 +1,5 @@
 # LiteFS
 
-## Moved
-
-Source is now at [git.sr.ht/~danieljamespost/litefs](https://git.sr.ht/~danieljamespost/litefs)
-
 ## What is LiteFS?
 
 LiteFS is a command line application that cryptographically verifies and serves
